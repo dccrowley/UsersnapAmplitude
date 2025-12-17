@@ -1,0 +1,41 @@
+Feedback_ID,Date,Teacher_Name,Category,Title,Description,Priority,Theme
+USF001,2024-12-01,Sarah Mitchell,Positive,Love the new grading interface,The updated grading interface is so much cleaner and easier to use. Great work!,Low,Other
+USF002,2024-12-01,James Patterson,Issue,Too many clicks to configure levels,Setting up differentiation levels requires clicking through 5 different screens. Very tedious.,High,Too many clicks
+USF003,2024-12-02,Maria Garcia,Bug,Configure levels button sometimes unresponsive,Clicked the Configure Levels button 3 times before it responded. Frustrating when you're in a hurry.,Medium,Confusing UI
+USF004,2024-12-02,David Chen,Issue,Level configuration is time consuming,Spent 25 minutes trying to set up 3 ability levels for one assessment. This should take 5 minutes max.,Critical,Time consuming
+USF005,2024-12-03,Lisa Thompson,Positive,Student progress reports are excellent,The new progress visualization helps me identify struggling students quickly,Low,Other
+USF006,2024-12-03,Ahmed Al-Rashid,Issue,Confusing interface for assigning to groups,After configuring levels I couldn't figure out how to actually assign them to my student groups. UI not intuitive.,High,Confusing UI
+USF007,2024-12-04,Emma Wilson,Issue,Too many steps to create differentiated assignment,The workflow has way too many steps. I count 7 clicks minimum to get a differentiated assignment published.,Critical,Too many clicks
+USF008,2024-12-04,Robert Taylor,Bug,Assign to Groups screen is confusing,The dropdown menus on the Assign to Groups screen don't clearly show which level goes to which group.,Medium,Confusing UI
+USF009,2024-12-05,Priya Sharma,Issue,Configure Levels screen freezes browser,When I have more than 20 students the Configure Levels screen makes my browser very slow.,High,Time consuming
+USF010,2024-12-05,Carlos Rodriguez,Positive,Quick feedback feature is great,Being able to give quick audio feedback directly in the app saves so much time,Low,Other
+USF011,2024-12-06,Jennifer Brown,Issue,Way too many clicks required,I literally counted 12 clicks to publish one differentiated assessment. My colleague using competitor does it in 3.,Critical,Too many clicks
+USF012,2024-12-06,Mohammed Hassan,Issue,Time wasted on configuration,I've now spent 3 hours this week just configuring differentiation levels. This is supposed to save me time!,Critical,Time consuming
+USF013,2024-12-07,Sophie Turner,Bug,Group assignment UI misleading,The UI shows a checkmark but the assignment didn't actually save. Had to redo the whole thing.,High,Confusing UI
+USF014,2024-12-08,William Martinez,Positive,Love the new resource library,The expanded resource library has so many great materials I can use,Low,Other
+USF015,2024-12-08,Fatima Ali,Issue,Differentiation workflow needs simplification,The entire differentiation workflow is overly complex. Open -> Create -> Select -> Configure -> Assign -> Publish is too many steps.,High,Too many clicks
+USF016,2024-12-09,Thomas Anderson,Issue,Level configuration takes forever,Each time I configure levels the system takes 30+ seconds to respond. With 5 classes that's 10+ minutes of waiting.,Critical,Time consuming
+USF017,2024-12-09,Rachel Green,Feature Request,Dark mode please,Would really appreciate a dark mode option for late night grading,Low,Missing feature
+USF018,2024-12-10,Omar Khalil,Issue,UI doesn't make sense for group assignment,I have 3 groups and 3 levels but the interface doesn't make it obvious how to match them up.,High,Confusing UI
+USF019,2024-12-10,Elena Popov,Positive,Student engagement metrics helpful,The engagement tracking helps me see which students need more support,Low,Other
+USF020,2024-12-11,Marcus Johnson,Issue,Click fatigue is real,By the end of setting up differentiated assignments for all my classes my hand hurts from all the clicking.,High,Too many clicks
+USF021,2024-12-11,Aisha Patel,Bug,Configure button requires double-click,The Configure Levels button only works if I double-click it. Single click does nothing.,Medium,Confusing UI
+USF022,2024-12-12,Daniel Kim,Issue,Process takes too long,What should be a 2 minute task takes me 15 minutes every time. The time adds up.,Critical,Time consuming
+USF023,2024-12-12,Natalie Brooks,Positive,Collaboration features work well,Working with my co-teacher on shared assignments is seamless,Low,Other
+USF024,2024-12-13,Yuki Tanaka,Issue,Excessive clicking required,Need to reduce the number of clicks. Every other platform does this in fewer steps.,High,Too many clicks
+USF025,2024-12-13,Sebastian Meyer,Bug,Assign to Groups dropdown confusing,Selected Group A for Level 1 but it saved as Level 2. The dropdowns are mislabeled or buggy.,Critical,Confusing UI
+USF026,2024-12-14,Olivia Parker,Feature Request,Bulk level configuration,Need ability to configure all levels at once instead of one at a time,Medium,Missing feature
+USF027,2024-12-14,Hassan Mahmoud,Issue,Workflow is broken,Spent 45 minutes trying to configure and assign differentiated levels. Eventually gave up and assigned same to all.,Critical,Time consuming
+USF028,2024-12-15,Grace Liu,Positive,Assessment templates save time,Pre-built templates have cut my planning time significantly,Low,Other
+USF029,2024-12-15,Andre Silva,Issue,Too complicated UI for group assignment,The Assign to Groups interface has too many options and not enough guidance. I always make mistakes.,High,Confusing UI
+USF030,2024-12-16,Chloe Adams,Issue,Clicking through screens is exhausting,Open Assignments -> Click Create -> Select Content -> Open Differentiation -> Configure -> Assign -> Publish. Too many screens!,Critical,Too many clicks
+USF031,2024-12-16,Raj Gupta,Feature Request,Offline mode needed,Need ability to grade when internet connection is spotty,Medium,Missing feature
+USF032,2024-12-17,Isabella Romano,Issue,Wasted an hour on configuration,Lost an entire prep period trying to configure differentiation. Students got undifferentiated work because I ran out of time.,Critical,Time consuming
+USF033,2024-12-17,Kevin O'Brien,Positive,Love the analytics dashboard,Data visualization of class performance is really well done,Low,Other
+USF034,2024-12-18,Layla Ahmed,Bug,UI elements overlap on Configure Levels,On my laptop the configuration options overlap making it impossible to select the right levels.,High,Confusing UI
+USF035,2024-12-18,Noah Williams,Issue,Multi-step process is a dealbreaker,If configuring differentiation continues to require this many steps I'll go back to paper worksheets.,Critical,Too many clicks
+USF036,2024-12-19,Zara Khan,Feature Request,Templates for differentiation levels,Would love pre-set level configurations I can reuse,Low,Missing feature
+USF037,2024-12-19,Lucas Fernandez,Issue,Minutes turn into hours,Setting up one week of differentiated assignments takes me 2+ hours. This needs to be 30 minutes max.,Critical,Time consuming
+USF038,2024-12-20,Mia Anderson,Positive,Student portfolio feature excellent,Digital portfolios showcase student growth beautifully,Low,Other
+USF039,2024-12-20,Ibrahim Youssef,Issue,Group assignment UI is counterintuitive,The mental model for assigning levels to groups doesn't match how teachers think about differentiation.,High,Confusing UI
+USF040,2024-12-20,Sophia Nguyen,Issue,Navigation requires too many clicks,Getting lost in the navigation between Configure Levels and Assign to Groups. Too many clicks to go back and forth.,High,Too many clicks

@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AL:P-ops: FAKE DATA Differentiated Assignments - Feedback to Journey Analysis</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Custom Properties - 8-point grid system */
+    :root {
+      /* Spacing - Swiss 8-point grid */
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-2xl: 48px;
+      --space-3xl: 64px;
+
+      /* Alef Brand */
+      --alef-primary: #00A3E0;
+      --alef-secondary: #003C71;
+      --alef-accent: #7AB800;
+
+      /* Extended Accents */
+      --accent-yellow: #F5C542;
+      --accent-yellow-light: #FEF3C7;
+      --accent-lilac: #B8A9C9;
+      --accent-lilac-light: #E8E0F0;
+      --accent-red: #E85A4F;
+      --accent-red-light: #FEE2E2;
+
+      /* Neutrals */
+      --neutral-50: #FAFAFA;
+      --neutral-100: #F5F5F5;
+      --neutral-200: #E5E5E5;
+      --neutral-300: #D4D4D4;
+      --neutral-400: #A3A3A3;
+      --neutral-500: #737373;
+      --neutral-600: #525252;
+      --neutral-700: #404040;
+      --neutral-800: #262626;
+      --neutral-900: #171717;
+
+      /* Semantic */
+      --semantic-success: #10B981;
+      --semantic-warning: #F59E0B;
+      --semantic-error: #EF4444;
+      --semantic-info: #3B82F6;
+
+      /* Categorical */
+      --cat-1: #3B82F6;
+      --cat-2: #10B981;
+      --cat-3: #F59E0B;
+      --cat-4: #EF4444;
+      --cat-5: #8B5CF6;
+    }
+
+    /* Reset and Base */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--neutral-50);
+      color: var(--neutral-900);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Dashboard Grid */
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: var(--space-lg);
+      padding: var(--space-2xl);
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .widget-full { grid-column: span 12; }
+    .widget-half { grid-column: span 6; }
+    .widget-third { grid-column: span 4; }
+    .widget-quarter { grid-column: span 3; }
+
+    @media (max-width: 1024px) {
+      .widget-half, .widget-third { grid-column: span 6; }
+      .widget-quarter { grid-column: span 6; }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard { padding: var(--space-lg); }
+      .widget-half, .widget-third, .widget-quarter { grid-column: span 12; }
+    }
+
+    /* Typography */
+    .dashboard-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--neutral-900);
+      margin-bottom: var(--space-sm);
+    }
+
+    .dashboard-subtitle {
+      font-size: 14px;
+      color: var(--neutral-500);
+    }
+
+    .section-header {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--neutral-800);
+      margin-bottom: var(--space-md);
+    }
+
+    .widget-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--neutral-600);
+    }
+
+    /* Widget Card */
+    .widget {
+      background: white;
+      border: 1px solid var(--neutral-200);
+      border-radius: 12px;
+      padding: var(--space-lg);
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    .widget.visible {
+      animation: widget-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes widget-enter {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* KPI Cards */
+    .kpi-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .kpi-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--neutral-900);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .kpi-footer {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: 13px;
+    }
+
+    .kpi-trend {
+      font-weight: 600;
+    }
+
+    .kpi-trend.negative { color: var(--semantic-error); }
+    .kpi-trend.positive { color: var(--semantic-success); }
+    .kpi-trend.neutral { color: var(--neutral-500); }
+
+    .kpi-subtitle {
+      color: var(--neutral-500);
+    }
+
+    /* Chart Containers */
+    .chart-container {
+      width: 100%;
+      position: relative;
+    }
+
+    .chart-description {
+      font-size: 13px;
+      color: var(--neutral-500);
+      margin-bottom: var(--space-md);
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      margin-top: var(--space-md);
+      font-size: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    /* Donut Chart Styles */
+    .donut-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: var(--space-xl);
+    }
+
+    .donut-center {
+      position: absolute;
+      top: 50%;
+      left: 90px;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .donut-center-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--neutral-900);
+      display: block;
+    }
+
+    .donut-center-label {
+      font-size: 11px;
+      color: var(--neutral-500);
+    }
+
+    .donut-legend {
+      flex: 1;
+    }
+
+    .donut-legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--neutral-100);
+    }
+
+    .donut-legend-item:last-child {
+      border-bottom: none;
+    }
+
+    .donut-legend-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: 13px;
+      color: var(--neutral-700);
+    }
+
+    .donut-legend-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--neutral-900);
+    }
+
+    /* Insight Card */
+    .insight-card {
+      background: var(--accent-yellow-light);
+      border-radius: 8px;
+      padding: var(--space-lg);
+      border-left: 4px solid var(--accent-yellow);
+    }
+
+    .insight-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #92400E;
+      margin-bottom: var(--space-sm);
+    }
+
+    .insight-text {
+      font-size: 13px;
+      color: #78350F;
+      line-height: 1.6;
+    }
+
+    .insight-text strong {
+      font-weight: 600;
+    }
+
+    /* Table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--neutral-600);
+      padding: 12px 8px;
+      border-bottom: 2px solid var(--neutral-200);
+    }
+
+    .data-table th[data-align="right"] {
+      text-align: right;
+    }
+
+    .data-table td {
+      padding: 12px 8px;
+      border-bottom: 1px solid var(--neutral-100);
+      color: var(--neutral-800);
+    }
+
+    .data-table td[data-align="right"] {
+      text-align: right;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .data-table td.highlight {
+      color: var(--semantic-error);
+    }
+
+    .data-table td.muted {
+      color: var(--neutral-500);
+      font-style: italic;
+    }
+
+    /* Complaint Cards */
+    .complaint-feed {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .complaint-card {
+      background: var(--accent-red-light);
+      border-radius: 8px;
+      padding: 12px 16px;
+      border-left: 3px solid var(--semantic-error);
+      opacity: 0;
+      transform: translateX(-8px);
+    }
+
+    .complaint-card.visible {
+      animation: slide-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes slide-in {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .complaint-quote {
+      font-size: 13px;
+      color: #7F1D1D;
+      font-style: italic;
+      margin-bottom: var(--space-sm);
+    }
+
+    .complaint-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #991B1B;
+    }
+
+    /* Process Section */
+    .process-section {
+      background: linear-gradient(135deg, var(--alef-secondary) 0%, var(--alef-primary) 100%);
+      border-radius: 12px;
+      padding: var(--space-xl);
+      color: white;
+    }
+
+    .process-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: var(--space-lg);
+    }
+
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-lg);
+    }
+
+    @media (max-width: 768px) {
+      .process-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .process-step {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: var(--space-md);
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    .process-step.visible {
+      animation: scale-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes scale-in {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .process-number {
+      width: 28px;
+      height: 28px;
+      background: white;
+      color: var(--alef-secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: var(--space-sm);
+    }
+
+    .process-step-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: var(--space-xs);
+    }
+
+    .process-step-desc {
+      font-size: 12px;
+      opacity: 0.85;
+      line-height: 1.4;
+    }
+
+    /* Correlation Grid */
+    .correlation-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--space-xl);
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      .correlation-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* SVG Styles */
+    .axis-label {
+      font-size: 11px;
+      fill: var(--neutral-400);
+    }
+
+    .grid-line {
+      stroke: var(--neutral-200);
+      stroke-dasharray: 2, 4;
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: absolute;
+      background: var(--neutral-900);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      z-index: 100;
+      white-space: nowrap;
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Header -->
+    <header class="widget-full" style="background: transparent; border: none; padding: 0;">
+      <h1 class="dashboard-title">AL:P-ops: FAKE DATA Differentiated Assignments - Feedback to Journey Analysis</h1>
+      <p class="dashboard-subtitle">Connecting UserSnap complaints to Amplitude teacher journey drop-off patterns</p>
+    </header>
+
+    <!-- KPI Cards -->
+    <div class="widget widget-quarter kpi-card" style="animation-delay: 0ms;">
+      <span class="widget-title">Total Complaints</span>
+      <span class="kpi-value" id="kpi-total">0</span>
+      <div class="kpi-footer">
+        <span class="kpi-trend negative">↑ +42%</span>
+        <span class="kpi-subtitle">Last 30 days</span>
+      </div>
+    </div>
+
+    <div class="widget widget-quarter kpi-card" style="animation-delay: 80ms;">
+      <span class="widget-title">High Severity</span>
+      <span class="kpi-value" id="kpi-severity">0%</span>
+      <div class="kpi-footer">
+        <span class="kpi-trend negative">↑ +18%</span>
+        <span class="kpi-subtitle">8 of 12 complaints</span>
+      </div>
+    </div>
+
+    <div class="widget widget-quarter kpi-card" style="animation-delay: 160ms;">
+      <span class="widget-title">Overall Drop-off</span>
+      <span class="kpi-value" id="kpi-dropoff">0%</span>
+      <div class="kpi-footer">
+        <span class="kpi-trend negative">↓ Getting worse</span>
+        <span class="kpi-subtitle">Assignment funnel</span>
+      </div>
+    </div>
+
+    <div class="widget widget-quarter kpi-card" style="animation-delay: 240ms;">
+      <span class="widget-title">Worst Step</span>
+      <span class="kpi-value" id="kpi-worst">0%</span>
+      <div class="kpi-footer">
+        <span class="kpi-trend negative">⚠ Critical</span>
+        <span class="kpi-subtitle">Configure Levels</span>
+      </div>
+    </div>
+
+    <!-- Teacher Journey Funnel -->
+    <div class="widget widget-half" style="animation-delay: 320ms;">
+      <h2 class="section-header">Teacher Journey: Creating Differentiated Assignments</h2>
+      <p class="chart-description">Amplitude funnel showing where teachers abandon the workflow</p>
+      <div class="chart-container" id="funnel-chart"></div>
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-dot" style="background: var(--semantic-error);"></span>
+          <span>Critical drop-off (50%+)</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background: var(--semantic-warning);"></span>
+          <span>High drop-off (30-50%)</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background: var(--alef-primary);"></span>
+          <span>Normal</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Complaint Categories Donut -->
+    <div class="widget widget-half" style="animation-delay: 400ms;">
+      <h2 class="section-header">UserSnap Complaint Themes</h2>
+      <p class="chart-description">Categorised feedback about differentiated assignments</p>
+      <div class="donut-container">
+        <div id="donut-chart" style="position: relative;"></div>
+        <div class="donut-center">
+          <span class="donut-center-value">12</span>
+          <span class="donut-center-label">complaints</span>
+        </div>
+        <div class="donut-legend" id="donut-legend"></div>
+      </div>
+    </div>
+
+    <!-- Correlation Chart -->
+    <div class="widget widget-full" style="animation-delay: 480ms;">
+      <h2 class="section-header">The Connection: Complaints Track with Drop-off</h2>
+      <p class="chart-description">As UserSnap complaints increase, we see corresponding increases in funnel drop-off at the differentiation steps</p>
+      <div class="correlation-grid">
+        <div class="chart-container" id="correlation-chart"></div>
+        <div class="insight-card">
+          <h3 class="insight-title">Key Insight</h3>
+          <p class="insight-text">
+            There is a <strong>0.89 correlation</strong> between weekly UserSnap complaints about differentiation and the drop-off rate at the "Configure Levels" step.
+            <br><br>
+            When complaints spike, teachers are abandoning the workflow at the same friction point they describe in their feedback.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journey to Complaint Mapping -->
+    <div class="widget widget-half" style="animation-delay: 560ms;">
+      <h2 class="section-header">Feedback Mapped to Journey Steps</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Journey Step</th>
+            <th data-align="right">Complaints</th>
+            <th>Common Theme</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Open Differentiation</td>
+            <td data-align="right">4</td>
+            <td class="muted">Hidden/confusing menu location</td>
+          </tr>
+          <tr>
+            <td>Configure Levels</td>
+            <td data-align="right" class="highlight">6</td>
+            <td class="muted">Too many clicks, repetitive workflow</td>
+          </tr>
+          <tr>
+            <td>Assign to Groups</td>
+            <td data-align="right">2</td>
+            <td class="muted">Error-prone selection process</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Recent Complaints -->
+    <div class="widget widget-half" style="animation-delay: 640ms;">
+      <h2 class="section-header">Recent High-Severity Feedback</h2>
+      <div class="complaint-feed" id="complaint-feed"></div>
+    </div>
+
+    <!-- Process Section -->
+    <div class="widget-full process-section" style="animation-delay: 720ms;">
+      <h2 class="process-title">Recommended Process: Connecting Feedback to Journey Data</h2>
+      <div class="process-grid" id="process-grid"></div>
+    </div>
+  </div>
+
+  <!-- Tooltip -->
+  <div class="tooltip" id="tooltip"></div>
+
+  <script>
+    // Data
+    const funnelData = [
+      { step: 'Open Assignments', users: 2847, dropoff: 0 },
+      { step: 'Click Create New', users: 2134, dropoff: 25 },
+      { step: 'Select Content', users: 1876, dropoff: 12 },
+      { step: 'Open Differentiation', users: 987, dropoff: 47 },
+      { step: 'Configure Levels', users: 423, dropoff: 57 },
+      { step: 'Assign to Groups', users: 312, dropoff: 26 },
+      { step: 'Complete & Publish', users: 234, dropoff: 25 },
+    ];
+
+    const donutData = [
+      { name: 'Too many clicks', value: 5, colour: '#EF4444' },
+      { name: 'Time consuming', value: 3, colour: '#F59E0B' },
+      { name: 'Confusing UI', value: 3, colour: '#8B5CF6' },
+      { name: 'Missing feature', value: 1, colour: '#6B7280' },
+    ];
+
+    const correlationData = [
+      { week: 'W1', complaints: 3, dropoffRate: 45 },
+      { week: 'W2', complaints: 4, dropoffRate: 52 },
+      { week: 'W3', complaints: 5, dropoffRate: 58 },
+      { week: 'W4', complaints: 6, dropoffRate: 61 },
+      { week: 'W5', complaints: 7, dropoffRate: 67 },
+      { week: 'W6', complaints: 9, dropoffRate: 72 },
+    ];
+
+    const complaints = [
+      { quote: 'It takes 8 clicks just to assign different levels to my 3 groups', category: 'Too many clicks', date: '2024-11-01' },
+      { quote: 'Spent 40 minutes trying to differentiate one assignment', category: 'Time consuming', date: '2024-11-05' },
+      { quote: 'I gave up and just assigned the same work to everyone', category: 'Time consuming', date: '2024-11-12' },
+      { quote: 'This should take 2 minutes not 20', category: 'Time consuming', date: '2024-11-18' },
+    ];
+
+    const processSteps = [
+      { num: '1', title: 'Tag UserSnap', desc: 'Categorise complaints by theme and journey step' },
+      { num: '2', title: 'Map to Amplitude', desc: 'Identify which funnel steps correlate to complaint themes' },
+      { num: '3', title: 'Track Weekly', desc: 'Monitor correlation between complaint volume and drop-off' },
+      { num: '4', title: 'Prioritise Fixes', desc: 'Target highest-correlation friction points first' },
+    ];
+
+    // Tooltip helper
+    const tooltip = d3.select('#tooltip');
+
+    function showTooltip(event, html) {
+      tooltip
+        .html(html)
+        .style('left', (event.pageX + 12) + 'px')
+        .style('top', (event.pageY - 12) + 'px')
+        .classed('visible', true);
+    }
+
+    function hideTooltip() {
+      tooltip.classed('visible', false);
+    }
+
+    // Animate KPIs
+    function animateValue(id, start, end, suffix = '', duration = 1200) {
+      const el = document.getElementById(id);
+      const startTime = performance.now();
+      
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(start + (end - start) * eased);
+        el.textContent = current + suffix;
+        
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        }
+      }
+      
+      requestAnimationFrame(update);
+    }
+
+    // Draw Funnel Chart
+    function drawFunnelChart() {
+      const container = d3.select('#funnel-chart');
+      const width = container.node().getBoundingClientRect().width;
+      const height = 280;
+      const margin = { top: 8, right: 80, bottom: 8, left: 130 };
+      const chartWidth = width - margin.left - margin.right;
+      const chartHeight = height - margin.top - margin.bottom;
+
+      const svg = container.append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('role', 'img')
+        .attr('aria-label', 'Funnel chart showing teacher journey drop-off');
+
+      const g = svg.append('g')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+      const xScale = d3.scaleLinear()
+        .domain([0, d3.max(funnelData, d => d.users)])
+        .range([0, chartWidth]);
+
+      const yScale = d3.scaleBand()
+        .domain(funnelData.map(d => d.step))
+        .range([0, chartHeight])
+        .padding(0.25);
+
+      // Y Axis labels
+      g.selectAll('.y-label')
+        .data(funnelData)
+        .join('text')
+        .attr('class', 'axis-label')
+        .attr('x', -8)
+        .attr('y', d => yScale(d.step) + yScale.bandwidth() / 2)
+        .attr('dy', '0.35em')
+        .attr('text-anchor', 'end')
+        .text(d => d.step);
+
+      // Bars
+      const bars = g.selectAll('.bar')
+        .data(funnelData)
+        .join('rect')
+        .attr('class', 'bar')
+        .attr('x', 0)
+        .attr('y', d => yScale(d.step))
+        .attr('height', yScale.bandwidth())
+        .attr('rx', 6)
+        .attr('fill', d => {
+          if (d.dropoff > 50) return '#EF4444';
+          if (d.dropoff > 30) return '#F59E0B';
+          return '#00A3E0';
+        })
+        .attr('width', 0)
+        .style('cursor', 'pointer')
+        .on('mouseenter', function(event, d) {
+          d3.select(this).attr('opacity', 0.8);
+          showTooltip(event, `<strong>${d.step}</strong><br>${d.users.toLocaleString()} teachers<br>${d.dropoff > 0 ? d.dropoff + '% drop-off' : ''}`);
+        })
+        .on('mouseleave', function() {
+          d3.select(this).attr('opacity', 1);
+          hideTooltip();
+        });
+
+      // Animate bars
+      bars.transition()
+        .duration(800)
+        .delay((d, i) => i * 80)
+        .ease(d3.easeCubicOut)
+        .attr('width', d => xScale(d.users));
+
+      // Value labels
+      g.selectAll('.value-label')
+        .data(funnelData)
+        .join('text')
+        .attr('class', 'axis-label')
+        .attr('x', d => xScale(d.users) + 8)
+        .attr('y', d => yScale(d.step) + yScale.bandwidth() / 2)
+        .attr('dy', '0.35em')
+        .style('font-weight', '600')
+        .style('fill', '#171717')
+        .style('opacity', 0)
+        .text(d => d.users.toLocaleString())
+        .transition()
+        .duration(400)
+        .delay((d, i) => 600 + i * 80)
+        .style('opacity', 1);
+    }
+
+    // Draw Donut Chart
+    function drawDonutChart() {
+      const container = d3.select('#donut-chart');
+      const size = 180;
+      const radius = size / 2;
+      const innerRadius = radius * 0.55;
+
+      const svg = container.append('svg')
+        .attr('width', size)
+        .attr('height', size)
+        .attr('role', 'img')
+        .attr('aria-label', 'Donut chart showing complaint categories');
+
+      const g = svg.append('g')
+        .attr('transform', `translate(${radius}, ${radius})`);
+
+      const pie = d3.pie()
+        .value(d => d.value)
+        .sort(null)
+        .startAngle(-Math.PI / 2)
+        .endAngle(3 * Math.PI / 2)
+        .padAngle(0.03);
+
+      const arc = d3.arc()
+        .innerRadius(innerRadius)
+        .outerRadius(radius - 4)
+        .cornerRadius(4);
+
+      const arcHover = d3.arc()
+        .innerRadius(innerRadius)
+        .outerRadius(radius)
+        .cornerRadius(4);
+
+      const arcs = g.selectAll('.arc')
+        .data(pie(donutData))
+        .join('path')
+        .attr('class', 'arc')
+        .attr('fill', d => d.data.colour)
+        .style('cursor', 'pointer')
+        .on('mouseenter', function(event, d) {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('d', arcHover);
+          showTooltip(event, `<strong>${d.data.name}</strong><br>${d.data.value} complaints`);
+        })
+        .on('mouseleave', function() {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('d', arc);
+          hideTooltip();
+        });
+
+      // Animate arcs
+      arcs.transition()
+        .duration(800)
+        .delay((d, i) => i * 100)
+        .ease(d3.easeCubicOut)
+        .attrTween('d', function(d) {
+          const interpolate = d3.interpolate({ startAngle: d.startAngle, endAngle: d.startAngle }, d);
+          return t => arc(interpolate(t));
+        });
+
+      // Legend
+      const legend = d3.select('#donut-legend');
+      donutData.forEach((item, i) => {
+        const row = legend.append('div')
+          .attr('class', 'donut-legend-item')
+          .style('opacity', 0);
+
+        row.append('div')
+          .attr('class', 'donut-legend-label')
+          .html(`<span class="legend-dot" style="background: ${item.colour};"></span>${item.name}`);
+
+        row.append('span')
+          .attr('class', 'donut-legend-value')
+          .text(item.value);
+
+        row.transition()
+          .duration(400)
+          .delay(800 + i * 100)
+          .style('opacity', 1);
+      });
+    }
+
+    // Draw Correlation Chart
+    function drawCorrelationChart() {
+      const container = d3.select('#correlation-chart');
+      const width = container.node().getBoundingClientRect().width;
+      const height = 240;
+      const margin = { top: 24, right: 48, bottom: 32, left: 48 };
+      const chartWidth = width - margin.left - margin.right;
+      const chartHeight = height - margin.top - margin.bottom;
+
+      const svg = container.append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('role', 'img')
+        .attr('aria-label', 'Line chart showing correlation between complaints and drop-off rate');
+
+      const g = svg.append('g')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+      const xScale = d3.scalePoint()
+        .domain(correlationData.map(d => d.week))
+        .range([0, chartWidth])
+        .padding(0.5);
+
+      const yScaleLeft = d3.scaleLinear()
+        .domain([0, 10])
+        .range([chartHeight, 0]);
+
+      const yScaleRight = d3.scaleLinear()
+        .domain([0, 100])
+        .range([chartHeight, 0]);
+
+      // Grid lines
+      g.selectAll('.grid-line')
+        .data(yScaleLeft.ticks(5))
+        .join('line')
+        .attr('class', 'grid-line')
+        .attr('x1', 0)
+        .attr('x2', chartWidth)
+        .attr('y1', d => yScaleLeft(d))
+        .attr('y2', d => yScaleLeft(d));
+
+      // X Axis
+      g.selectAll('.x-label')
+        .data(correlationData)
+        .join('text')
+        .attr('class', 'axis-label')
+        .attr('x', d => xScale(d.week))
+        .attr('y', chartHeight + 20)
+        .attr('text-anchor', 'middle')
+        .text(d => d.week);
+
+      // Y Axis Left
+      g.selectAll('.y-label-left')
+        .data(yScaleLeft.ticks(5))
+        .join('text')
+        .attr('class', 'axis-label')
+        .attr('x', -8)
+        .attr('y', d => yScaleLeft(d))
+        .attr('dy', '0.35em')
+        .attr('text-anchor', 'end')
+        .text(d => d);
+
+      // Y Axis Right
+      g.selectAll('.y-label-right')
+        .data(yScaleRight.ticks(5))
+        .join('text')
+        .attr('class', 'axis-label')
+        .attr('x', chartWidth + 8)
+        .attr('y', d => yScaleRight(d))
+        .attr('dy', '0.35em')
+        .attr('text-anchor', 'start')
+        .text(d => d + '%');
+
+      // Axis titles
+      g.append('text')
+        .attr('class', 'axis-label')
+        .attr('x', -margin.left + 12)
+        .attr('y', -8)
+        .text('Complaints');
+
+      g.append('text')
+        .attr('class', 'axis-label')
+        .attr('x', chartWidth + margin.right - 12)
+        .attr('y', -8)
+        .attr('text-anchor', 'end')
+        .text('Drop-off %');
+
+      // Complaints line
+      const lineComplaints = d3.line()
+        .x(d => xScale(d.week))
+        .y(d => yScaleLeft(d.complaints))
+        .curve(d3.curveMonotoneX);
+
+      const pathComplaints = g.append('path')
+        .datum(correlationData)
+        .attr('fill', 'none')
+        .attr('stroke', '#8B5CF6')
+        .attr('stroke-width', 2.5)
+        .attr('d', lineComplaints);
+
+      // Animate line
+      const lengthComplaints = pathComplaints.node().getTotalLength();
+      pathComplaints
+        .attr('stroke-dasharray', lengthComplaints)
+        .attr('stroke-dashoffset', lengthComplaints)
+        .transition()
+        .duration(1200)
+        .ease(d3.easeCubicOut)
+        .attr('stroke-dashoffset', 0);
+
+      // Drop-off line
+      const lineDropoff = d3.line()
+        .x(d => xScale(d.week))
+        .y(d => yScaleRight(d.dropoffRate))
+        .curve(d3.curveMonotoneX);
+
+      const pathDropoff = g.append('path')
+        .datum(correlationData)
+        .attr('fill', 'none')
+        .attr('stroke', '#EF4444')
+        .attr('stroke-width', 2.5)
+        .attr('d', lineDropoff);
+
+      const lengthDropoff = pathDropoff.node().getTotalLength();
+      pathDropoff
+        .attr('stroke-dasharray', lengthDropoff)
+        .attr('stroke-dashoffset', lengthDropoff)
+        .transition()
+        .duration(1200)
+        .delay(200)
+        .ease(d3.easeCubicOut)
+        .attr('stroke-dashoffset', 0);
+
+      // Dots - Complaints
+      g.selectAll('.dot-complaints')
+        .data(correlationData)
+        .join('circle')
+        .attr('class', 'dot-complaints')
+        .attr('cx', d => xScale(d.week))
+        .attr('cy', d => yScaleLeft(d.complaints))
+        .attr('r', 0)
+        .attr('fill', '#8B5CF6')
+        .style('cursor', 'pointer')
+        .on('mouseenter', function(event, d) {
+          d3.select(this).attr('r', 6);
+          showTooltip(event, `<strong>${d.week}</strong><br>${d.complaints} complaints`);
+        })
+        .on('mouseleave', function() {
+          d3.select(this).attr('r', 4);
+          hideTooltip();
+        })
+        .transition()
+        .duration(400)
+        .delay((d, i) => 1000 + i * 80)
+        .attr('r', 4);
+
+      // Dots - Drop-off
+      g.selectAll('.dot-dropoff')
+        .data(correlationData)
+        .join('circle')
+        .attr('class', 'dot-dropoff')
+        .attr('cx', d => xScale(d.week))
+        .attr('cy', d => yScaleRight(d.dropoffRate))
+        .attr('r', 0)
+        .attr('fill', '#EF4444')
+        .style('cursor', 'pointer')
+        .on('mouseenter', function(event, d) {
+          d3.select(this).attr('r', 6);
+          showTooltip(event, `<strong>${d.week}</strong><br>${d.dropoffRate}% drop-off`);
+        })
+        .on('mouseleave', function() {
+          d3.select(this).attr('r', 4);
+          hideTooltip();
+        })
+        .transition()
+        .duration(400)
+        .delay((d, i) => 1200 + i * 80)
+        .attr('r', 4);
+
+      // Legend
+      const legend = g.append('g')
+        .attr('transform', `translate(${chartWidth - 180}, -16)`);
+
+      legend.append('line')
+        .attr('x1', 0).attr('x2', 20)
+        .attr('y1', 0).attr('y2', 0)
+        .attr('stroke', '#8B5CF6')
+        .attr('stroke-width', 2.5);
+
+      legend.append('text')
+        .attr('x', 28).attr('y', 0)
+        .attr('dy', '0.35em')
+        .attr('class', 'axis-label')
+        .text('Complaints');
+
+      legend.append('line')
+        .attr('x1', 100).attr('x2', 120)
+        .attr('y1', 0).attr('y2', 0)
+        .attr('stroke', '#EF4444')
+        .attr('stroke-width', 2.5);
+
+      legend.append('text')
+        .attr('x', 128).attr('y', 0)
+        .attr('dy', '0.35em')
+        .attr('class', 'axis-label')
+        .text('Drop-off %');
+    }
+
+    // Render Complaints
+    function renderComplaints() {
+      const feed = document.getElementById('complaint-feed');
+      complaints.forEach((c, i) => {
+        const card = document.createElement('div');
+        card.className = 'complaint-card';
+        card.innerHTML = `
+          <p class="complaint-quote">"${c.quote}"</p>
+          <div class="complaint-meta">
+            <span>${c.category}</span>
+            <span>${c.date}</span>
+          </div>
+        `;
+        feed.appendChild(card);
+
+        setTimeout(() => {
+          card.classList.add('visible');
+        }, 800 + i * 150);
+      });
+    }
+
+    // Render Process Steps
+    function renderProcessSteps() {
+      const grid = document.getElementById('process-grid');
+      processSteps.forEach((step, i) => {
+        const el = document.createElement('div');
+        el.className = 'process-step';
+        el.innerHTML = `
+          <div class="process-number">${step.num}</div>
+          <h3 class="process-step-title">${step.title}</h3>
+          <p class="process-step-desc">${step.desc}</p>
+        `;
+        grid.appendChild(el);
+
+        setTimeout(() => {
+          el.classList.add('visible');
+        }, 1000 + i * 120);
+      });
+    }
+
+    // Animate widgets visibility
+    function animateWidgets() {
+      const widgets = document.querySelectorAll('.widget');
+      widgets.forEach((widget, i) => {
+        setTimeout(() => {
+          widget.classList.add('visible');
+        }, i * 80);
+      });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      animateWidgets();
+
+      // KPIs with delay
+      setTimeout(() => {
+        animateValue('kpi-total', 0, 12);
+        animateValue('kpi-severity', 0, 67, '%');
+        animateValue('kpi-dropoff', 0, 92, '%');
+        animateValue('kpi-worst', 0, 57, '%');
+      }, 400);
+
+      // Charts
+      setTimeout(() => {
+        drawFunnelChart();
+        drawDonutChart();
+        drawCorrelationChart();
+        renderComplaints();
+        renderProcessSteps();
+      }, 600);
+    });
+  </script>
+</body>
+</html>

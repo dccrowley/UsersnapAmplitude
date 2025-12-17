@@ -1,0 +1,17 @@
+---
+description: UI Design System & Styling Rules
+globs: *.tsx, *.css, *.ts
+---
+# UI Implementation
+- **Library**: Tailwind CSS + shadcn/ui + Lucide React.
+- **Font**: Inter or Geist Sans.
+
+# Color Token Mapping
+- Background: `bg-neutral-100` (#f4f4f4)
+- Card: `bg-white`
+- Accent: `text-blue-600`
+- Border: `border-neutral-200`
+
+# Components
+- **Buttons**: Sharp corners or small radius (`rounded-md`).
+- **Layout**: Fixed Sidebar (`w-[280px]`), Fixed Header (`h-[73px]`).

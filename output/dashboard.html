@@ -1,0 +1,1056 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AL:P-ops: Differentiated Assignments - Feedback to Journey Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+  :root {
+    --alef-primary: #00A3E0;
+    --alef-secondary: #003C71;
+    --alef-accent: #7AB800;
+
+    /* Semantic colors - bold and clear */
+    --critical: #E53935;
+    --critical-bg: rgba(229, 57, 53, 0.08);
+    --warning: #FB8C00;
+    --warning-bg: rgba(251, 140, 0, 0.08);
+    --normal: #1E88E5;
+    --normal-bg: rgba(30, 136, 229, 0.08);
+    --success: #43A047;
+    --success-bg: rgba(67, 160, 71, 0.08);
+
+    /* Complaint theme colors (warm palette for donut) */
+    --theme-1: #E53935;
+    --theme-2: #FB8C00;
+    --theme-3: #7E57C2;
+    --theme-4: #78909C;
+
+    --neutral-50: #FAFAFA;
+    --neutral-100: #F5F5F5;
+    --neutral-200: #EEEEEE;
+    --neutral-300: #E0E0E0;
+    --neutral-400: #BDBDBD;
+    --neutral-500: #9E9E9E;
+    --neutral-600: #757575;
+    --neutral-700: #616161;
+    --neutral-800: #424242;
+    --neutral-900: #212121;
+
+    --surface: #ffffff;
+    --surface-elevated: #ffffff;
+
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Fira Sans", system-ui, -apple-system, sans-serif;
+    background: var(--neutral-100);
+    color: var(--neutral-900);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--space-lg);
+  }
+
+  /* Header */
+  .header {
+    background: var(--alef-secondary);
+    color: white;
+    padding: var(--space-lg) var(--space-xl);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  .header-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-xs);
+  }
+
+  .header-subtitle {
+    font-size: 14px;
+    opacity: 0.85;
+  }
+
+  /* KPI Row */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+
+  .kpi-card {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .kpi-label {
+    font-size: 13px;
+    color: var(--neutral-600);
+    font-weight: 500;
+    margin-bottom: var(--space-sm);
+  }
+
+  .kpi-value {
+    font-family: "Fira Mono", monospace;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: var(--space-sm);
+    letter-spacing: -0.02em;
+  }
+
+  .kpi-trend {
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .kpi-trend.up-bad { color: var(--critical); }
+  .kpi-trend.up-good { color: var(--success); }
+  .kpi-trend.down-bad { color: var(--critical); }
+  .kpi-trend.down-good { color: var(--success); }
+  .kpi-trend.neutral { color: var(--neutral-600); }
+
+  .kpi-context {
+    font-size: 12px;
+    color: var(--neutral-500);
+    margin-top: var(--space-xs);
+  }
+
+  /* Main Grid */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+  }
+
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--neutral-900);
+    margin-bottom: var(--space-xs);
+  }
+
+  .card-subtitle {
+    font-size: 13px;
+    color: var(--neutral-600);
+    margin-bottom: var(--space-lg);
+  }
+
+  /* Funnel Chart */
+  .funnel-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .funnel-step {
+    display: grid;
+    grid-template-columns: 140px 1fr 60px;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .funnel-label {
+    font-size: 13px;
+    color: var(--neutral-700);
+    text-align: right;
+  }
+
+  .funnel-bar-container {
+    height: 32px;
+    background: var(--neutral-200);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .funnel-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease-out;
+  }
+
+  .funnel-bar.normal { background: var(--normal); }
+  .funnel-bar.warning { background: var(--warning); }
+  .funnel-bar.critical { background: var(--critical); }
+
+  .funnel-count {
+    font-family: "Fira Mono", monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--neutral-800);
+  }
+
+  .funnel-legend {
+    display: flex;
+    gap: var(--space-lg);
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--neutral-200);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 12px;
+    color: var(--neutral-600);
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  /* Donut Chart */
+  .donut-container {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xl);
+  }
+
+  .donut-chart {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    flex-shrink: 0;
+  }
+
+  .donut-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .donut-center-value {
+    font-family: "Fira Mono", monospace;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--neutral-900);
+    line-height: 1;
+  }
+
+  .donut-center-label {
+    font-size: 12px;
+    color: var(--neutral-500);
+    margin-top: var(--space-xs);
+  }
+
+  .donut-legend {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .donut-legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .donut-legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .donut-legend-label {
+    flex: 1;
+    font-size: 14px;
+    color: var(--neutral-700);
+  }
+
+  .donut-legend-value {
+    font-family: "Fira Mono", monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--neutral-900);
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed;
+    z-index: 1000;
+    background: var(--neutral-900);
+    color: white;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    max-width: 280px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .tooltip.visible { opacity: 1; }
+
+  .tooltip-title {
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+  }
+
+  .tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .tooltip-row span:last-child {
+    font-family: "Fira Mono", monospace;
+    font-weight: 500;
+  }
+
+  /* Insight Block */
+  .insight-block {
+    background: var(--alef-secondary);
+    color: white;
+    border-radius: var(--radius-md);
+    padding: var(--space-xl);
+    margin-top: var(--space-lg);
+  }
+
+  .insight-headline {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: var(--space-lg);
+  }
+
+  .insight-headline .highlight {
+    color: var(--warning);
+  }
+
+  .insight-body {
+    font-size: 15px;
+    line-height: 1.6;
+    opacity: 0.9;
+    margin-bottom: var(--space-lg);
+  }
+
+  .insight-quotes {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .quote-card {
+    background: rgba(255,255,255,0.1);
+    border-left: 3px solid var(--warning);
+    padding: var(--space-md);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .quote-card .author {
+    font-style: normal;
+    font-weight: 500;
+    margin-top: var(--space-sm);
+    opacity: 0.7;
+    font-size: 12px;
+  }
+
+  /* Mapping Table */
+  .mapping-section {
+    margin-top: var(--space-lg);
+  }
+
+  .mapping-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .mapping-table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--neutral-600);
+    padding: var(--space-md);
+    border-bottom: 2px solid var(--neutral-300);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .mapping-table td {
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--neutral-200);
+    vertical-align: top;
+  }
+
+  .mapping-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .mapping-table .step-name {
+    font-weight: 500;
+    color: var(--neutral-900);
+  }
+
+  .mapping-table .metric {
+    font-family: "Fira Mono", monospace;
+    font-weight: 600;
+  }
+
+  .mapping-table .metric.critical { color: var(--critical); }
+  .mapping-table .metric.warning { color: var(--warning); }
+  .mapping-table .metric.normal { color: var(--normal); }
+
+  .mapping-table .theme-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--neutral-100);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .mapping-table .quote-cell {
+    font-size: 13px;
+    color: var(--neutral-600);
+    font-style: italic;
+    max-width: 300px;
+  }
+
+  /* High Severity Feed */
+  .feedback-section {
+    margin-top: var(--space-lg);
+  }
+
+  .feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+
+  .feedback-card {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border-left: 4px solid transparent;
+  }
+
+  .feedback-card.critical {
+    border-left-color: var(--critical);
+    background: var(--critical-bg);
+  }
+
+  .feedback-card.high {
+    border-left-color: var(--warning);
+    background: var(--warning-bg);
+  }
+
+  .feedback-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-sm);
+  }
+
+  .feedback-priority {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .feedback-priority.critical {
+    background: var(--critical);
+    color: white;
+  }
+
+  .feedback-priority.high {
+    background: var(--warning);
+    color: white;
+  }
+
+  .feedback-date {
+    font-size: 12px;
+    color: var(--neutral-500);
+  }
+
+  .feedback-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--neutral-900);
+    margin-bottom: var(--space-sm);
+    line-height: 1.4;
+  }
+
+  .feedback-description {
+    font-size: 13px;
+    color: var(--neutral-600);
+    line-height: 1.5;
+  }
+
+  .feedback-theme {
+    margin-top: var(--space-md);
+    font-size: 12px;
+    color: var(--neutral-500);
+  }
+
+  .feedback-theme span {
+    font-weight: 500;
+    color: var(--neutral-700);
+  }
+
+  .feedback-footer {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--neutral-200);
+    font-size: 13px;
+    color: var(--neutral-500);
+  }
+
+  /* Method Notes */
+  .method-notes {
+    margin-top: var(--space-lg);
+    padding: var(--space-lg);
+    background: var(--neutral-50);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--neutral-200);
+  }
+
+  .method-notes h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--neutral-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-sm);
+  }
+
+  .method-notes p {
+    font-size: 13px;
+    color: var(--neutral-600);
+    line-height: 1.6;
+  }
+
+  /* Responsive */
+  @media (max-width: 1000px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .main-grid { grid-template-columns: 1fr; }
+    .feedback-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .kpi-row { grid-template-columns: 1fr; }
+    .donut-container { flex-direction: column; }
+    .funnel-step { grid-template-columns: 100px 1fr 50px; }
+    .funnel-label { font-size: 11px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .funnel-bar { transition: none; }
+  }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Header -->
+    <header class="header">
+      <h1 class="header-title">AL:P-ops: FAKE DATA Differentiated Assignments - Feedback to Journey Analysis</h1>
+      <p class="header-subtitle">Connecting UserSnap complaints to Amplitude teacher journey drop-off patterns</p>
+    </header>
+
+    <!-- KPI Row -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Complaints</div>
+        <div class="kpi-value" id="kpi-complaints">—</div>
+        <div class="kpi-trend up-bad" id="kpi-complaints-trend">
+          <span>↑</span> <span id="kpi-complaints-change">+0%</span>
+        </div>
+        <div class="kpi-context">Last 30 days</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">High Severity</div>
+        <div class="kpi-value" id="kpi-severity">—</div>
+        <div class="kpi-trend up-bad" id="kpi-severity-trend">
+          <span>↑</span> <span id="kpi-severity-change">+0%</span>
+        </div>
+        <div class="kpi-context" id="kpi-severity-context">0 of 0 complaints</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Overall Drop-off</div>
+        <div class="kpi-value" style="color: var(--critical)" id="kpi-dropoff">—</div>
+        <div class="kpi-trend down-bad" id="kpi-dropoff-trend">
+          <span>↓</span> <span>Getting worse</span>
+        </div>
+        <div class="kpi-context">Assignment funnel</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Worst Step</div>
+        <div class="kpi-value" style="color: var(--critical)" id="kpi-worst">—</div>
+        <div class="kpi-trend neutral" id="kpi-worst-trend">
+          <span>⚠</span> <span>Critical</span>
+        </div>
+        <div class="kpi-context" id="kpi-worst-context">Configure Levels</div>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+      <!-- Funnel Chart -->
+      <div class="card">
+        <h2 class="card-title">Teacher Journey: Creating Differentiated Assignments</h2>
+        <p class="card-subtitle">Amplitude funnel showing where teachers abandon the workflow</p>
+
+        <div class="funnel-container" id="funnel"></div>
+
+        <div class="funnel-legend">
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--critical)"></span>
+            <span>Critical drop-off (50%+)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--warning)"></span>
+            <span>High drop-off (30-50%)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--normal)"></span>
+            <span>Normal</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Donut Chart -->
+      <div class="card">
+        <h2 class="card-title">UserSnap Complaint Themes</h2>
+        <p class="card-subtitle">Categorised feedback about differentiated assignments</p>
+
+        <div class="donut-container">
+          <div class="donut-chart">
+            <svg id="donut-svg" viewBox="0 0 180 180"></svg>
+            <div class="donut-center">
+              <div class="donut-center-value" id="donut-total">—</div>
+              <div class="donut-center-label">complaints</div>
+            </div>
+          </div>
+          <div class="donut-legend" id="donut-legend"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insight Block: The Story -->
+    <div class="insight-block">
+      <h2 class="insight-headline">
+        The differentiated assignment workflow loses <span class="highlight">89% of teachers</span> across 7 steps,
+        with two critical bottlenecks at <span class="highlight">46% drop-off each</span>.
+      </h2>
+      <p class="insight-body">
+        Teachers who attempt to create differentiated assignments face a gauntlet of friction.
+        The biggest losses occur at "Open Differentiation" (step 4) and "Assign to Groups" (step 6) —
+        exactly where Usersnap complaints about "Too many clicks" and "Confusing UI" are concentrated.
+        This is not a coincidence: the qual and quant signals are perfectly aligned.
+      </p>
+      <div class="insight-quotes">
+        <div class="quote-card">
+          "The workflow has way too many steps. I count 7 clicks minimum to get a differentiated assignment published."
+          <div class="author">— Teacher feedback, Dec 2024</div>
+        </div>
+        <div class="quote-card">
+          "After configuring levels I couldn't figure out how to actually assign them to my student groups. UI not intuitive."
+          <div class="author">— Teacher feedback, Dec 2024</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mapping Table: Feedback Mapped to Journey Steps -->
+    <div class="card mapping-section">
+      <h2 class="card-title">Feedback Mapped to Journey Steps</h2>
+      <p class="card-subtitle">Linking qualitative complaints to quantitative drop-off points</p>
+
+      <table class="mapping-table">
+        <thead>
+          <tr>
+            <th>Journey Step</th>
+            <th>Drop-off</th>
+            <th>Attempts</th>
+            <th>Top Theme</th>
+            <th>Mentions</th>
+            <th>Representative Quote</th>
+          </tr>
+        </thead>
+        <tbody id="mapping-tbody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Recent High-Severity Feedback -->
+    <section class="feedback-section">
+      <div class="card">
+        <h2 class="card-title">Recent High-Severity Feedback</h2>
+        <p class="card-subtitle">Critical and high-priority complaints from teachers (showing 3 of 21)</p>
+
+        <div class="feedback-grid" id="feedback-grid">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="feedback-footer">
+          21 high-severity complaints in the last 30 days. Contact Product Ops for full export.
+        </div>
+      </div>
+    </section>
+
+    <!-- Method Notes -->
+    <div class="method-notes">
+      <h3>Methodology</h3>
+      <p>
+        <strong>Data sources:</strong> Amplitude 7-step funnel export (Dec 1–20, 2024), Usersnap feedback export (40 items, 32 non-positive).
+        <strong>Analysis:</strong> Complaints categorised by theme and mapped to funnel steps based on feature area and language alignment.
+        <strong>Drop-off calculation:</strong> (users at step N-1 − users at step N) ÷ users at step N-1.
+        <strong>Note:</strong> This dashboard uses synthetic data for demonstration purposes.
+      </p>
+    </div>
+  </div>
+
+  <!-- Tooltip -->
+  <div class="tooltip" id="tooltip">
+    <div class="tooltip-title" id="tooltip-title"></div>
+    <div class="tooltip-content" id="tooltip-content"></div>
+  </div>
+
+  <script>
+  // Data derived from the CSVs
+  const DATA = {
+    // Funnel data: counts at each step (derived from Amplitude CSV)
+    funnel: [
+      { step: "Open Assignments", count: 93, order: 1 },
+      { step: "Click Create New", count: 70, order: 2 },
+      { step: "Select Content", count: 56, order: 3 },
+      { step: "Open Differentiation", count: 30, order: 4 },
+      { step: "Configure Levels", count: 24, order: 5 },
+      { step: "Assign to Groups", count: 13, order: 6 },
+      { step: "Complete & Publish", count: 10, order: 7 }
+    ],
+
+    // Complaint themes (derived from Usersnap CSV Theme column)
+    themes: [
+      { name: "Too many clicks", count: 10, color: "var(--theme-1)" },
+      { name: "Time consuming", count: 8, color: "var(--theme-2)" },
+      { name: "Confusing UI", count: 10, color: "var(--theme-3)" },
+      { name: "Missing feature", count: 4, color: "var(--theme-4)" }
+    ],
+
+    // KPIs
+    kpis: {
+      totalComplaints: 32, // non-positive
+      totalComplaintsChange: 42,
+      highSeverityCount: 21,
+      highSeverityPct: 66,
+      highSeverityChange: 18,
+      overallDropoff: 89, // (93-10)/93 * 100
+      worstStep: "Open Differentiation",
+      worstStepDropoff: 46 // (56-30)/56 = 46%
+    },
+
+    // Mapping table: linking journey steps to complaint themes
+    mapping: [
+      {
+        step: "Open Differentiation",
+        dropoffPct: 46,
+        attempts: 56,
+        theme: "Too many clicks",
+        mentions: 10,
+        quote: "The workflow has way too many steps. I count 7 clicks minimum to get a differentiated assignment published."
+      },
+      {
+        step: "Assign to Groups",
+        dropoffPct: 46,
+        attempts: 24,
+        theme: "Confusing UI",
+        mentions: 10,
+        quote: "The dropdown menus on the Assign to Groups screen don't clearly show which level goes to which group."
+      },
+      {
+        step: "Configure Levels",
+        dropoffPct: 20,
+        attempts: 30,
+        theme: "Time consuming",
+        mentions: 8,
+        quote: "Spent 25 minutes trying to set up 3 ability levels for one assessment. This should take 5 minutes max."
+      }
+    ],
+
+    // Recent high-severity feedback
+    recentFeedback: [
+      {
+        date: "2024-12-20",
+        priority: "High",
+        title: "Navigation requires too many clicks",
+        description: "Getting lost in the navigation between Configure Levels and Assign to Groups. Too many clicks to go back and forth.",
+        theme: "Too many clicks"
+      },
+      {
+        date: "2024-12-19",
+        priority: "Critical",
+        title: "Minutes turn into hours",
+        description: "Setting up one week of differentiated assignments takes me 2+ hours. This needs to be 30 minutes max.",
+        theme: "Time consuming"
+      },
+      {
+        date: "2024-12-18",
+        priority: "Critical",
+        title: "Multi-step process is a dealbreaker",
+        description: "If configuring differentiation continues to require this many steps I'll go back to paper worksheets.",
+        theme: "Too many clicks"
+      }
+    ]
+  };
+
+  // Calculate overall drop-off correctly
+  const startCount = DATA.funnel[0].count;
+  const endCount = DATA.funnel[DATA.funnel.length - 1].count;
+  DATA.kpis.overallDropoff = Math.round((1 - endCount / startCount) * 100);
+
+  // Tooltip
+  const tooltip = document.getElementById('tooltip');
+  const tooltipTitle = document.getElementById('tooltip-title');
+  const tooltipContent = document.getElementById('tooltip-content');
+
+  function showTooltip(title, content, event) {
+    tooltipTitle.textContent = title;
+    tooltipContent.innerHTML = content;
+    tooltip.classList.add('visible');
+    positionTooltip(event);
+  }
+
+  function hideTooltip() {
+    tooltip.classList.remove('visible');
+  }
+
+  function positionTooltip(event) {
+    const pad = 12;
+    let x = event.clientX + pad;
+    let y = event.clientY + pad;
+
+    const rect = tooltip.getBoundingClientRect();
+    if (x + rect.width > window.innerWidth - pad) {
+      x = event.clientX - rect.width - pad;
+    }
+    if (y + rect.height > window.innerHeight - pad) {
+      y = event.clientY - rect.height - pad;
+    }
+
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  // Render KPIs
+  document.getElementById('kpi-complaints').textContent = DATA.kpis.totalComplaints;
+  document.getElementById('kpi-complaints-change').textContent = `+${DATA.kpis.totalComplaintsChange}%`;
+
+  document.getElementById('kpi-severity').textContent = DATA.kpis.highSeverityPct + '%';
+  document.getElementById('kpi-severity-change').textContent = `+${DATA.kpis.highSeverityChange}%`;
+  document.getElementById('kpi-severity-context').textContent = `${DATA.kpis.highSeverityCount} of ${DATA.kpis.totalComplaints} complaints`;
+
+  document.getElementById('kpi-dropoff').textContent = DATA.kpis.overallDropoff + '%';
+
+  document.getElementById('kpi-worst').textContent = DATA.kpis.worstStepDropoff + '%';
+  document.getElementById('kpi-worst-context').textContent = DATA.kpis.worstStep;
+
+  // Render Funnel
+  const funnelContainer = document.getElementById('funnel');
+  const maxCount = DATA.funnel[0].count;
+
+  DATA.funnel.forEach((item, index) => {
+    const prevCount = index > 0 ? DATA.funnel[index - 1].count : item.count;
+    const stepDropoff = index > 0 ? Math.round((1 - item.count / prevCount) * 100) : 0;
+
+    let barClass = 'normal';
+    if (stepDropoff >= 50) barClass = 'critical';
+    else if (stepDropoff >= 30) barClass = 'warning';
+
+    const widthPct = (item.count / maxCount) * 100;
+
+    const stepEl = document.createElement('div');
+    stepEl.className = 'funnel-step';
+    stepEl.innerHTML = `
+      <div class="funnel-label">${item.step}</div>
+      <div class="funnel-bar-container">
+        <div class="funnel-bar ${barClass}" style="width: 0%" data-width="${widthPct}"></div>
+      </div>
+      <div class="funnel-count">${item.count.toLocaleString()}</div>
+    `;
+
+    // Tooltip on hover
+    const barContainer = stepEl.querySelector('.funnel-bar-container');
+    barContainer.style.cursor = 'default';
+    barContainer.addEventListener('mouseenter', (e) => {
+      const content = `
+        <div class="tooltip-row"><span>Users at step:</span><span>${item.count.toLocaleString()}</span></div>
+        <div class="tooltip-row"><span>Drop-off from prev:</span><span>${stepDropoff}%</span></div>
+        <div class="tooltip-row"><span>% of start:</span><span>${Math.round(widthPct)}%</span></div>
+      `;
+      showTooltip(item.step, content, e);
+    });
+    barContainer.addEventListener('mousemove', positionTooltip);
+    barContainer.addEventListener('mouseleave', hideTooltip);
+
+    funnelContainer.appendChild(stepEl);
+  });
+
+  // Animate bars
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.funnel-bar').forEach((bar) => {
+      bar.style.width = bar.dataset.width + '%';
+    });
+  });
+
+  // Render Donut
+  const donutSvg = document.getElementById('donut-svg');
+  const donutLegend = document.getElementById('donut-legend');
+  const totalThemeComplaints = DATA.themes.reduce((sum, t) => sum + t.count, 0);
+
+  document.getElementById('donut-total').textContent = totalThemeComplaints;
+
+  // Create donut paths
+  const cx = 90, cy = 90, r = 70, innerR = 45;
+  let startAngle = -Math.PI / 2;
+
+  DATA.themes.forEach((theme, i) => {
+    const sliceAngle = (theme.count / totalThemeComplaints) * Math.PI * 2;
+    const endAngle = startAngle + sliceAngle;
+
+    const x1 = cx + r * Math.cos(startAngle);
+    const y1 = cy + r * Math.sin(startAngle);
+    const x2 = cx + r * Math.cos(endAngle);
+    const y2 = cy + r * Math.sin(endAngle);
+    const x3 = cx + innerR * Math.cos(endAngle);
+    const y3 = cy + innerR * Math.sin(endAngle);
+    const x4 = cx + innerR * Math.cos(startAngle);
+    const y4 = cy + innerR * Math.sin(startAngle);
+
+    const largeArc = sliceAngle > Math.PI ? 1 : 0;
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `
+      M ${x1} ${y1}
+      A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}
+      L ${x3} ${y3}
+      A ${innerR} ${innerR} 0 ${largeArc} 0 ${x4} ${y4}
+      Z
+    `);
+    path.setAttribute('fill', theme.color);
+    path.style.cursor = 'default';
+    path.style.transition = 'transform 0.15s';
+
+    path.addEventListener('mouseenter', (e) => {
+      path.style.transform = 'scale(1.03)';
+      path.style.transformOrigin = 'center';
+      const pct = Math.round((theme.count / totalThemeComplaints) * 100);
+      const content = `
+        <div class="tooltip-row"><span>Count:</span><span>${theme.count}</span></div>
+        <div class="tooltip-row"><span>Share:</span><span>${pct}%</span></div>
+      `;
+      showTooltip(theme.name, content, e);
+    });
+    path.addEventListener('mousemove', positionTooltip);
+    path.addEventListener('mouseleave', () => {
+      path.style.transform = '';
+      hideTooltip();
+    });
+
+    donutSvg.appendChild(path);
+    startAngle = endAngle;
+
+    // Legend item
+    const legendItem = document.createElement('div');
+    legendItem.className = 'donut-legend-item';
+    legendItem.innerHTML = `
+      <div class="donut-legend-dot" style="background: ${theme.color}"></div>
+      <div class="donut-legend-label">${theme.name}</div>
+      <div class="donut-legend-value">${theme.count}</div>
+    `;
+    donutLegend.appendChild(legendItem);
+  });
+
+  // Render Mapping Table
+  const mappingTbody = document.getElementById('mapping-tbody');
+
+  DATA.mapping.forEach((row) => {
+    let dropoffClass = 'normal';
+    if (row.dropoffPct >= 50) dropoffClass = 'critical';
+    else if (row.dropoffPct >= 30) dropoffClass = 'warning';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="step-name">${row.step}</td>
+      <td><span class="metric ${dropoffClass}">${row.dropoffPct}%</span></td>
+      <td><span class="metric">${row.attempts}</span></td>
+      <td><span class="theme-tag">${row.theme}</span></td>
+      <td><span class="metric">${row.mentions}</span></td>
+      <td class="quote-cell">"${row.quote}"</td>
+    `;
+    mappingTbody.appendChild(tr);
+  });
+
+  // Render Recent Feedback Cards
+  const feedbackGrid = document.getElementById('feedback-grid');
+
+  DATA.recentFeedback.forEach((item) => {
+    const priorityClass = item.priority.toLowerCase();
+    const card = document.createElement('div');
+    card.className = `feedback-card ${priorityClass}`;
+    card.innerHTML = `
+      <div class="feedback-header">
+        <span class="feedback-priority ${priorityClass}">${item.priority}</span>
+        <span class="feedback-date">${item.date}</span>
+      </div>
+      <h3 class="feedback-title">${item.title}</h3>
+      <p class="feedback-description">${item.description}</p>
+      <div class="feedback-theme">Theme: <span>${item.theme}</span></div>
+    `;
+    feedbackGrid.appendChild(card);
+  });
+  </script>
+</body>
+</html>

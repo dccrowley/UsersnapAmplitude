@@ -1,0 +1,151 @@
+{
+  "kpis": {
+    "totalComplaints": 32,
+    "totalComplaintsChange": 42,
+    "highSeverityPct": 66,
+    "overallDropoffPct": 89,
+    "worstStep": "Open Differentiation",
+    "worstStepDropoffPct": 46,
+    "periodStart": "2024-12-01",
+    "periodEnd": "2024-12-20"
+  },
+  "funnel": [
+    {
+      "step": "Open Assignments",
+      "stepOrder": 1,
+      "count": 93,
+      "dropoffFromPrevious": 0,
+      "dropoffPct": 0,
+      "cumulativeDropoffPct": 0
+    },
+    {
+      "step": "Click Create New",
+      "stepOrder": 2,
+      "count": 70,
+      "dropoffFromPrevious": 23,
+      "dropoffPct": 25,
+      "cumulativeDropoffPct": 25
+    },
+    {
+      "step": "Select Content",
+      "stepOrder": 3,
+      "count": 56,
+      "dropoffFromPrevious": 14,
+      "dropoffPct": 20,
+      "cumulativeDropoffPct": 40
+    },
+    {
+      "step": "Open Differentiation",
+      "stepOrder": 4,
+      "count": 30,
+      "dropoffFromPrevious": 26,
+      "dropoffPct": 46,
+      "cumulativeDropoffPct": 68
+    },
+    {
+      "step": "Configure Levels",
+      "stepOrder": 5,
+      "count": 24,
+      "dropoffFromPrevious": 6,
+      "dropoffPct": 20,
+      "cumulativeDropoffPct": 74
+    },
+    {
+      "step": "Assign to Groups",
+      "stepOrder": 6,
+      "count": 13,
+      "dropoffFromPrevious": 11,
+      "dropoffPct": 46,
+      "cumulativeDropoffPct": 86
+    },
+    {
+      "step": "Complete & Publish",
+      "stepOrder": 7,
+      "count": 10,
+      "dropoffFromPrevious": 3,
+      "dropoffPct": 23,
+      "cumulativeDropoffPct": 89
+    }
+  ],
+  "themes": [
+    {"name": "Too many clicks", "count": 10, "pct": 31},
+    {"name": "Confusing UI", "count": 10, "pct": 31},
+    {"name": "Time consuming", "count": 8, "pct": 25},
+    {"name": "Missing feature", "count": 4, "pct": 13}
+  ],
+  "mappingRows": [
+    {
+      "journeyStep": "Open Differentiation",
+      "dropoffPct": 46,
+      "conversionPct": 54,
+      "attempts": 56,
+      "mappedTheme": "Too many clicks",
+      "usersnapMentions": 10,
+      "quote": "The workflow has way too many steps. I count 7 clicks minimum to get a differentiated assignment published."
+    },
+    {
+      "journeyStep": "Assign to Groups",
+      "dropoffPct": 46,
+      "conversionPct": 54,
+      "attempts": 24,
+      "mappedTheme": "Confusing UI",
+      "usersnapMentions": 10,
+      "quote": "The dropdown menus on the Assign to Groups screen don't clearly show which level goes to which group."
+    },
+    {
+      "journeyStep": "Configure Levels",
+      "dropoffPct": 20,
+      "conversionPct": 80,
+      "attempts": 30,
+      "mappedTheme": "Time consuming",
+      "usersnapMentions": 8,
+      "quote": "Spent 25 minutes trying to set up 3 ability levels for one assessment. This should take 5 minutes max."
+    }
+  ],
+  "recentHighSeverity": [
+    {
+      "date": "2024-12-20",
+      "priority": "High",
+      "category": "Issue",
+      "title": "Navigation requires too many clicks",
+      "description": "Getting lost in the navigation between Configure Levels and Assign to Groups. Too many clicks to go back and forth.",
+      "theme": "Too many clicks"
+    },
+    {
+      "date": "2024-12-19",
+      "priority": "Critical",
+      "category": "Issue",
+      "title": "Minutes turn into hours",
+      "description": "Setting up one week of differentiated assignments takes me 2+ hours. This needs to be 30 minutes max.",
+      "theme": "Time consuming"
+    },
+    {
+      "date": "2024-12-18",
+      "priority": "Critical",
+      "category": "Issue",
+      "title": "Multi-step process is a dealbreaker",
+      "description": "If configuring differentiation continues to require this many steps I'll go back to paper worksheets.",
+      "theme": "Too many clicks"
+    }
+  ],
+  "critical": {
+    "summary": "The differentiated assignment workflow loses 89% of users across 7 steps, with the worst drop-offs at 'Open Differentiation' (46%) and 'Assign to Groups' (46%). Teacher complaints align: 'Too many clicks' and 'Confusing UI' dominate feedback.",
+    "worstSteps": [
+      {"step": "Open Differentiation", "dropoffPct": 46, "theme": "Too many clicks"},
+      {"step": "Assign to Groups", "dropoffPct": 46, "theme": "Confusing UI"}
+    ],
+    "quotes": [
+      "The workflow has way too many steps. I count 7 clicks minimum to get a differentiated assignment published.",
+      "After configuring levels I couldn't figure out how to actually assign them to my student groups. UI not intuitive.",
+      "Spent 25 minutes trying to set up 3 ability levels for one assessment. This should take 5 minutes max.",
+      "The dropdown menus on the Assign to Groups screen don't clearly show which level goes to which group."
+    ]
+  },
+  "comparison": {
+    "standardVsDifferentiated": {
+      "standardCompletionPct": 100,
+      "differentiatedCompletionPct": 11,
+      "gap": 89
+    }
+  }
+}
