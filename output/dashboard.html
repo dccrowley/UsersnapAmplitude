@@ -306,40 +306,6 @@
     color: var(--neutral-900);
   }
 
-  /* Tooltip */
-  .tooltip {
-    position: fixed;
-    z-index: 1000;
-    background: var(--neutral-900);
-    color: white;
-    padding: var(--space-sm) var(--space-md);
-    border-radius: var(--radius-sm);
-    font-size: 13px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s;
-    max-width: 280px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  }
-
-  .tooltip.visible { opacity: 1; }
-
-  .tooltip-title {
-    font-weight: 600;
-    margin-bottom: var(--space-xs);
-  }
-
-  .tooltip-row {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-md);
-  }
-
-  .tooltip-row span:last-child {
-    font-family: "Fira Mono", monospace;
-    font-weight: 500;
-  }
-
   /* Insight Block */
   .insight-block {
     background: var(--alef-secondary);
@@ -567,6 +533,40 @@
     font-size: 13px;
     color: var(--neutral-600);
     line-height: 1.6;
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed;
+    z-index: 1000;
+    background: var(--neutral-900);
+    color: white;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    max-width: 280px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .tooltip.visible { opacity: 1; }
+
+  .tooltip-title {
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+  }
+
+  .tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .tooltip-row span:last-child {
+    font-family: "Fira Mono", monospace;
+    font-weight: 500;
   }
 
   /* Responsive */
