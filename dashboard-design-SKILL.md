@@ -48,15 +48,7 @@ Use the **8-point spacing system** for all measurements:
 | Body/labels | 12-14px | Regular (400) |
 | Data values (hero) | 36-48px | Bold (700) |
 
-**Font choices**: Prefer **Fira Sans** for all text and **Fira Mono** for numerals (KPIs, right-aligned numeric table columns). Maximum 2 typefaces per dashboard.
-
-**Typography discipline (Spiekermann-style craft)**:
-- Use a tight, consistent line-height system:
-  - Headlines: 1.10–1.20
-  - Body: 1.45–1.60
-  - Dense tables: 1.35–1.45
-- Use tabular numerals for all numeric columns and KPI values.
-- Keep hierarchy strict: one primary headline, clear section headers, quiet captions.
+**Font choices**: Inter, SF Pro, or similar high-quality sans-serif with clear distinction between 1/I and 0/O. Maximum 2 typefaces per dashboard.
 
 ## Colour Selection
 
@@ -134,12 +126,6 @@ Use animation to illuminate data changes, not to impress:
 - Smooth data value transitions
 - Subtle hover state changes
 - Chart draw-on effects
-
-### Interaction affordances (subtle, informative)
-- Use hover to **explain**, not decorate:
-  - Tooltips with metric name + value + short context
-  - Small emphasis transitions (scale 1.02–1.04, opacity 0.7→1.0)
-- Always respect `prefers-reduced-motion`
 
 ## Technical Implementation
 

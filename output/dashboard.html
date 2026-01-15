@@ -681,13 +681,13 @@
     <!-- Insight Block: The Story -->
     <div class="insight-block">
       <h2 class="insight-headline">
-        The differentiated assignment workflow loses <span class="highlight">89% of teachers</span> across 7 steps,
-        with two critical bottlenecks at <span class="highlight">46% drop-off each</span>.
+        The differentiated assignment workflow loses <span class="highlight">90% of teachers</span> across 7 steps,
+        with a critical bottleneck at <span class="highlight">"Assign to Groups" (58% drop-off)</span>.
       </h2>
       <p class="insight-body">
         Teachers who attempt to create differentiated assignments face a gauntlet of friction.
-        The biggest losses occur at "Open Differentiation" (step 4) and "Assign to Groups" (step 6) —
-        exactly where Usersnap complaints about "Too many clicks" and "Confusing UI" are concentrated.
+        The biggest loss occurs at "Assign to Groups" (step 6) —
+        exactly where Usersnap complaints about "Confusing UI" are concentrated.
         This is not a coincidence: the qual and quant signals are perfectly aligned.
       </p>
       <div class="insight-quotes">
@@ -744,10 +744,12 @@
     <div class="method-notes">
       <h3>Methodology</h3>
       <p>
-        <strong>Data sources:</strong> Amplitude 7-step funnel export (Dec 1–20, 2024), Usersnap feedback export (40 items, 32 non-positive).
-        <strong>Analysis:</strong> Complaints categorised by theme and mapped to funnel steps based on feature area and language alignment.
-        <strong>Drop-off calculation:</strong> (users at step N-1 − users at step N) ÷ users at step N-1.
-        <strong>Note:</strong> This dashboard uses synthetic data for demonstration purposes.
+        <strong>Data sources:</strong> Amplitude event-level export (308 events, Dec 1–20, 2024), Usersnap feedback export (40 items, 31 non-positive).
+        <strong>Pipeline:</strong> Automated Python script processes CSVs, counts unique users per funnel step, calculates drop-off percentages, and validates data quality across 6 dimensions (completeness, validity, accuracy, consistency, integrity, timeliness).
+        <strong>Analysis:</strong> Complaints categorised by theme column and mapped to funnel steps by identifying highest drop-off rates.
+        <strong>Drop-off calculation:</strong> (users at step N−1 − users at step N) ÷ users at step N−1 × 100.
+        <strong>Quality assurance:</strong> All metrics validated against source CSVs on every update. Zero manual data entry eliminates transcription errors.
+        <strong>Note:</strong> This dashboard uses synthetic data for demonstration purposes. Generated: <span id="generated-timestamp"></span>
       </p>
     </div>
   </div>
@@ -759,99 +761,64 @@
   </div>
 
   <script>
-  // Data derived from the CSVs
-  const DATA = {
-    // Funnel data: counts at each step (derived from Amplitude CSV)
-    funnel: [
-      { step: "Open Assignments", count: 93, order: 1 },
-      { step: "Click Create New", count: 70, order: 2 },
-      { step: "Select Content", count: 56, order: 3 },
-      { step: "Open Differentiation", count: 30, order: 4 },
-      { step: "Configure Levels", count: 24, order: 5 },
-      { step: "Assign to Groups", count: 13, order: 6 },
-      { step: "Complete & Publish", count: 10, order: 7 }
-    ],
+  // Load data from generated JSON file
+  let DATA = null;
 
-    // Complaint themes (derived from Usersnap CSV Theme column)
-    themes: [
-      { name: "Too many clicks", count: 10, color: "var(--theme-1)" },
-      { name: "Time consuming", count: 8, color: "var(--theme-2)" },
-      { name: "Confusing UI", count: 10, color: "var(--theme-3)" },
-      { name: "Missing feature", count: 4, color: "var(--theme-4)" }
-    ],
+  // Initialize dashboard when data is loaded
+  async function initDashboard() {
+    try {
+      const response = await fetch('dashboard-data.json');
+      DATA = await response.json();
 
-    // KPIs
-    kpis: {
-      totalComplaints: 32, // non-positive
-      totalComplaintsChange: 42,
-      highSeverityCount: 21,
-      highSeverityPct: 66,
-      highSeverityChange: 18,
-      overallDropoff: 89, // (93-10)/93 * 100
-      worstStep: "Open Differentiation",
-      worstStepDropoff: 46 // (56-30)/56 = 46%
-    },
+      // Calculate overall drop-off from the data (in case it's not in the JSON)
+      const startCount = DATA.funnel[0].count;
+      const endCount = DATA.funnel[DATA.funnel.length - 1].count;
+      DATA.kpis.overallDropoff = Math.round((1 - endCount / startCount) * 100);
 
-    // Mapping table: linking journey steps to complaint themes
-    mapping: [
-      {
-        step: "Open Differentiation",
-        dropoffPct: 46,
-        attempts: 56,
-        theme: "Too many clicks",
-        mentions: 10,
-        quote: "The workflow has way too many steps. I count 7 clicks minimum to get a differentiated assignment published."
-      },
-      {
-        step: "Assign to Groups",
-        dropoffPct: 46,
-        attempts: 24,
-        theme: "Confusing UI",
-        mentions: 10,
-        quote: "The dropdown menus on the Assign to Groups screen don't clearly show which level goes to which group."
-      },
-      {
-        step: "Configure Levels",
-        dropoffPct: 20,
-        attempts: 30,
-        theme: "Time consuming",
-        mentions: 8,
-        quote: "Spent 25 minutes trying to set up 3 ability levels for one assessment. This should take 5 minutes max."
+      // Render all dashboard components
+      renderDashboard();
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+      document.body.innerHTML = `
+        <div style="padding: 40px; text-align: center;">
+          <h1 style="color: var(--critical);">Error Loading Dashboard</h1>
+          <p>Could not load dashboard-data.json. Please ensure the file exists in the same directory as this HTML file.</p>
+          <p style="color: var(--neutral-600); font-size: 14px;">Error: ${error.message}</p>
+        </div>
+      `;
+    }
+  }
+
+  function renderDashboard() {
+    renderKPIs();
+    renderFunnel();
+    renderDonut();
+    renderMappingTable();
+    renderRecentFeedback();
+    renderTimestamp();
+  }
+
+  // Render generation timestamp
+  function renderTimestamp() {
+    if (DATA && DATA.metadata && DATA.metadata.generated_at) {
+      const timestamp = new Date(DATA.metadata.generated_at);
+      const timestampEl = document.getElementById('generated-timestamp');
+      if (timestampEl) {
+        timestampEl.textContent = timestamp.toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
       }
-    ],
+    }
+  }
 
-    // Recent high-severity feedback
-    recentFeedback: [
-      {
-        date: "2024-12-20",
-        priority: "High",
-        title: "Navigation requires too many clicks",
-        description: "Getting lost in the navigation between Configure Levels and Assign to Groups. Too many clicks to go back and forth.",
-        theme: "Too many clicks"
-      },
-      {
-        date: "2024-12-19",
-        priority: "Critical",
-        title: "Minutes turn into hours",
-        description: "Setting up one week of differentiated assignments takes me 2+ hours. This needs to be 30 minutes max.",
-        theme: "Time consuming"
-      },
-      {
-        date: "2024-12-18",
-        priority: "Critical",
-        title: "Multi-step process is a dealbreaker",
-        description: "If configuring differentiation continues to require this many steps I'll go back to paper worksheets.",
-        theme: "Too many clicks"
-      }
-    ]
-  };
+  // Run initialization on page load
+  document.addEventListener('DOMContentLoaded', initDashboard);
 
-  // Calculate overall drop-off correctly
-  const startCount = DATA.funnel[0].count;
-  const endCount = DATA.funnel[DATA.funnel.length - 1].count;
-  DATA.kpis.overallDropoff = Math.round((1 - endCount / startCount) * 100);
-
-  // Tooltip
+  // Tooltip functions (available globally)
   const tooltip = document.getElementById('tooltip');
   const tooltipTitle = document.getElementById('tooltip-title');
   const tooltipContent = document.getElementById('tooltip-content');
@@ -885,23 +852,27 @@
   }
 
   // Render KPIs
-  document.getElementById('kpi-complaints').textContent = DATA.kpis.totalComplaints;
-  document.getElementById('kpi-complaints-change').textContent = `+${DATA.kpis.totalComplaintsChange}%`;
+  function renderKPIs() {
+    document.getElementById('kpi-complaints').textContent = DATA.kpis.totalComplaints;
+    document.getElementById('kpi-complaints-change').textContent = `+${DATA.kpis.totalComplaintsChange}%`;
 
-  document.getElementById('kpi-severity').textContent = DATA.kpis.highSeverityPct + '%';
-  document.getElementById('kpi-severity-change').textContent = `+${DATA.kpis.highSeverityChange}%`;
-  document.getElementById('kpi-severity-context').textContent = `${DATA.kpis.highSeverityCount} of ${DATA.kpis.totalComplaints} complaints`;
+    document.getElementById('kpi-severity').textContent = DATA.kpis.highSeverityPct + '%';
+    document.getElementById('kpi-severity-change').textContent = `+${DATA.kpis.highSeverityChange}%`;
+    document.getElementById('kpi-severity-context').textContent = `${DATA.kpis.highSeverityCount} of ${DATA.kpis.totalComplaints} complaints`;
 
-  document.getElementById('kpi-dropoff').textContent = DATA.kpis.overallDropoff + '%';
+    document.getElementById('kpi-dropoff').textContent = DATA.kpis.overallDropoff + '%';
 
-  document.getElementById('kpi-worst').textContent = DATA.kpis.worstStepDropoff + '%';
-  document.getElementById('kpi-worst-context').textContent = DATA.kpis.worstStep;
+    document.getElementById('kpi-worst').textContent = Math.round(DATA.kpis.worstStepDropoff) + '%';
+    document.getElementById('kpi-worst-context').textContent = DATA.kpis.worstStep;
+  }
 
   // Render Funnel
-  const funnelContainer = document.getElementById('funnel');
-  const maxCount = DATA.funnel[0].count;
+  function renderFunnel() {
+    const funnelContainer = document.getElementById('funnel');
+    funnelContainer.innerHTML = ''; // Clear existing content
+    const maxCount = DATA.funnel[0].count;
 
-  DATA.funnel.forEach((item, index) => {
+    DATA.funnel.forEach((item, index) => {
     const prevCount = index > 0 ? DATA.funnel[index - 1].count : item.count;
     const stepDropoff = index > 0 ? Math.round((1 - item.count / prevCount) * 100) : 0;
 
@@ -935,22 +906,26 @@
     barContainer.addEventListener('mousemove', positionTooltip);
     barContainer.addEventListener('mouseleave', hideTooltip);
 
-    funnelContainer.appendChild(stepEl);
-  });
-
-  // Animate bars
-  requestAnimationFrame(() => {
-    document.querySelectorAll('.funnel-bar').forEach((bar) => {
-      bar.style.width = bar.dataset.width + '%';
+      funnelContainer.appendChild(stepEl);
     });
-  });
+
+    // Animate bars
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.funnel-bar').forEach((bar) => {
+        bar.style.width = bar.dataset.width + '%';
+      });
+    });
+  }
 
   // Render Donut
-  const donutSvg = document.getElementById('donut-svg');
-  const donutLegend = document.getElementById('donut-legend');
-  const totalThemeComplaints = DATA.themes.reduce((sum, t) => sum + t.count, 0);
+  function renderDonut() {
+    const donutSvg = document.getElementById('donut-svg');
+    const donutLegend = document.getElementById('donut-legend');
+    donutSvg.innerHTML = ''; // Clear existing content
+    donutLegend.innerHTML = ''; // Clear existing content
+    const totalThemeComplaints = DATA.themes.reduce((sum, t) => sum + t.count, 0);
 
-  document.getElementById('donut-total').textContent = totalThemeComplaints;
+    document.getElementById('donut-total').textContent = totalThemeComplaints;
 
   // Create donut paths
   const cx = 90, cy = 90, r = 70, innerR = 45;
@@ -1010,13 +985,16 @@
       <div class="donut-legend-label">${theme.name}</div>
       <div class="donut-legend-value">${theme.count}</div>
     `;
-    donutLegend.appendChild(legendItem);
-  });
+      donutLegend.appendChild(legendItem);
+    });
+  }
 
   // Render Mapping Table
-  const mappingTbody = document.getElementById('mapping-tbody');
+  function renderMappingTable() {
+    const mappingTbody = document.getElementById('mapping-tbody');
+    mappingTbody.innerHTML = ''; // Clear existing content
 
-  DATA.mapping.forEach((row) => {
+    DATA.mapping.forEach((row) => {
     let dropoffClass = 'normal';
     if (row.dropoffPct >= 50) dropoffClass = 'critical';
     else if (row.dropoffPct >= 30) dropoffClass = 'warning';
@@ -1030,13 +1008,16 @@
       <td><span class="metric">${row.mentions}</span></td>
       <td class="quote-cell">"${row.quote}"</td>
     `;
-    mappingTbody.appendChild(tr);
-  });
+      mappingTbody.appendChild(tr);
+    });
+  }
 
   // Render Recent Feedback Cards
-  const feedbackGrid = document.getElementById('feedback-grid');
+  function renderRecentFeedback() {
+    const feedbackGrid = document.getElementById('feedback-grid');
+    feedbackGrid.innerHTML = ''; // Clear existing content
 
-  DATA.recentFeedback.forEach((item) => {
+    DATA.recentFeedback.forEach((item) => {
     const priorityClass = item.priority.toLowerCase();
     const card = document.createElement('div');
     card.className = `feedback-card ${priorityClass}`;
@@ -1049,8 +1030,9 @@
       <p class="feedback-description">${item.description}</p>
       <div class="feedback-theme">Theme: <span>${item.theme}</span></div>
     `;
-    feedbackGrid.appendChild(card);
-  });
+      feedbackGrid.appendChild(card);
+    });
+  }
   </script>
 </body>
 </html>

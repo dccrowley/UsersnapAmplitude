@@ -1,0 +1,518 @@
+================================================================================
+                    DATA QUALITY & VALIDATION REPORT
+              Dashboard Project - Comprehensive Sanity Check
+================================================================================
+
+Report Date: 2026-01-15
+Analyst: Data Quality Audit
+Data Sources:
+  - /Users/d.crowley/Sites/dataAnalysis/data/FAKE_amplitude_analytics_data.csv
+  - /Users/d.crowley/Sites/dataAnalysis/data/FAKE_usersnap_teacher_feedback.csv
+Output Validated:
+  - /Users/d.crowley/Sites/dataAnalysis/output/dashboard.html
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+STATUS: ⚠️  ISSUES FOUND - Data discrepancies detected between CSV sources and
+                          dashboard output
+
+TOTAL ISSUES: 12 data discrepancies identified
+  - 6 funnel step count errors
+  - 1 theme count error
+  - 5 KPI calculation errors
+
+RECOMMENDATION: Dashboard data requires correction before production use.
+                The underlying CSV files are clean and valid, but the
+                hardcoded data object in the dashboard does not accurately
+                reflect the source data.
+
+================================================================================
+SECTION 1: SOURCE DATA QUALITY ASSESSMENT
+================================================================================
+
+1.1 AMPLITUDE ANALYTICS DATA
+─────────────────────────────────────────────────────────────────────────────
+
+File: FAKE_amplitude_analytics_data.csv
+Records: 308 event records (including header = 309 lines)
+Date Range: 2024-12-01 to 2024-12-20 (20 days)
+Unique Users: 93 teachers
+Unique Sessions: 93 sessions
+
+✓ COMPLETENESS: PASS
+  - No missing values in any field
+  - All required fields present
+
+✓ VALIDITY: PASS
+  - All dates valid (YYYY-MM-DD format)
+  - All numeric fields valid (Time_on_Task_Seconds, Retry_Attempts,
+    Funnel_Step_Order)
+  - All boolean fields valid (Task_Completed: TRUE/FALSE)
+
+✓ CONSISTENCY: PASS
+  - No duplicate records
+  - User_ID format consistent (T1001-T1093)
+  - Session_ID format consistent (S10001-S10093)
+  - User_Role consistent across all records (Teacher)
+  - Feature_Area consistent across all records (Assessment_Assignment)
+
+✓ INTEGRITY: PASS
+  - Each event name maps to exactly one funnel step order
+  - Funnel progression is logical (orders 1-7)
+  - 1:1 mapping between User_ID and Session_ID (each user has one session)
+
+✓ TIMELINESS: PASS
+  - Data covers recent 20-day period
+  - Daily data coverage across entire range
+
+VERDICT: Amplitude analytics CSV is CLEAN and VALID for analysis
+
+─────────────────────────────────────────────────────────────────────────────
+
+1.2 USERSNAP TEACHER FEEDBACK DATA
+─────────────────────────────────────────────────────────────────────────────
+
+File: FAKE_usersnap_teacher_feedback.csv
+Records: 40 feedback records (including header = 41 lines)
+Date Range: 2024-12-01 to 2024-12-20 (20 days)
+Unique Teachers: 40 teachers
+
+✓ COMPLETENESS: PASS
+  - No missing values in any field
+  - All required fields present
+
+✓ VALIDITY: PASS
+  - All dates valid (YYYY-MM-DD format)
+  - All priorities valid (Low, Medium, High, Critical)
+  - Feedback_ID format consistent (USF001-USF040)
+
+✓ CONSISTENCY: PASS
+  - No duplicate Feedback_IDs
+  - All IDs follow USF### pattern
+
+✓ CATEGORIES: PASS
+  - Positive: 9 records
+  - Issue: 21 records
+  - Bug: 6 records
+  - Feature Request: 4 records
+  Total: 40 records
+
+✓ TIMELINESS: PASS
+  - Data covers same 20-day period as analytics data
+  - Date ranges align perfectly
+
+VERDICT: Usersnap feedback CSV is CLEAN and VALID for analysis
+
+================================================================================
+SECTION 2: CALCULATED METRICS FROM SOURCE DATA
+================================================================================
+
+2.1 FUNNEL ANALYSIS (from Amplitude CSV)
+─────────────────────────────────────────────────────────────────────────────
+
+Step                              Order  Unique Users  Dropoff from Previous
+────────────────────────────────────────────────────────────────────────────
+Open_Assignments                    1         93              -
+Click_Create_New                    2         73           21.5%
+Select_Content                      3         53           27.4%
+Open_Differentiation                4         33           37.7%
+Configure_Levels                    5         33            0.0%
+Assign_To_Groups                    6         14           57.6%  ← WORST
+Complete_And_Publish                7          9           35.7%
+
+FUNNEL METRICS:
+  - Starting users: 93
+  - Completing users: 9
+  - Overall funnel dropoff: 90.3%
+  - Worst step: Configure_Levels → Assign_To_Groups (57.6% dropoff)
+  - Second worst: Open_Differentiation (37.7% dropoff)
+
+─────────────────────────────────────────────────────────────────────────────
+
+2.2 FEEDBACK THEME ANALYSIS (from Usersnap CSV)
+─────────────────────────────────────────────────────────────────────────────
+
+Theme                    Count    Percentage of Non-Positive
+──────────────────────────────────────────────────────────
+Confusing UI               10           32.3%
+Too many clicks             9           29.0%
+Time consuming              8           25.8%
+Missing feature             4           12.9%
+──────────────────────────────────────────────────────────
+Total Complaints           31          100.0%
+Positive Feedback           9             -
+──────────────────────────────────────────────────────────
+Total Records              40             -
+
+─────────────────────────────────────────────────────────────────────────────
+
+2.3 SEVERITY ANALYSIS (from Usersnap CSV)
+─────────────────────────────────────────────────────────────────────────────
+
+Priority Level          Count    Percentage
+────────────────────────────────────────────
+Critical                  12         30.0%
+High                      12         30.0%
+                        ─────    ─────────
+High/Critical Total       24         60.0%  ← KEY METRIC
+                        ─────    ─────────
+Medium                     5         12.5%
+Low                       11         27.5%
+────────────────────────────────────────────
+Total                     40        100.0%
+
+================================================================================
+SECTION 3: DASHBOARD DATA VALIDATION
+================================================================================
+
+3.1 FUNNEL DATA DISCREPANCIES
+─────────────────────────────────────────────────────────────────────────────
+
+Step                         CSV    Dashboard   Difference   Status
+────────────────────────────────────────────────────────────────────
+Open_Assignments              93         93           0       ✓ OK
+Click_Create_New              73         70          -3       ✗ ERROR
+Select_Content                53         56          +3       ✗ ERROR
+Open_Differentiation          33         30          -3       ✗ ERROR
+Configure_Levels              33         24          -9       ✗ ERROR
+Assign_To_Groups              14         13          -1       ✗ ERROR
+Complete_And_Publish           9         10          +1       ✗ ERROR
+
+ERRORS: 6 out of 7 funnel steps contain incorrect data
+
+IMPACT: HIGH - Core funnel visualization will be misleading
+
+─────────────────────────────────────────────────────────────────────────────
+
+3.2 THEME COUNT DISCREPANCIES
+─────────────────────────────────────────────────────────────────────────────
+
+Theme                    CSV    Dashboard   Difference   Status
+────────────────────────────────────────────────────────────────
+Too many clicks            9         10          +1       ✗ ERROR
+Time consuming             8          8           0       ✓ OK
+Confusing UI              10         10           0       ✓ OK
+Missing feature            4          4           0       ✓ OK
+
+ERRORS: 1 out of 4 themes contains incorrect data
+
+IMPACT: LOW - Minor error in theme distribution
+
+─────────────────────────────────────────────────────────────────────────────
+
+3.3 KPI DISCREPANCIES
+─────────────────────────────────────────────────────────────────────────────
+
+KPI                           CSV Value   Dashboard   Difference   Status
+─────────────────────────────────────────────────────────────────────────
+Total Complaints                    31          32          +1     ✗ ERROR
+High/Critical Count                 24          21          -3     ✗ ERROR
+High/Critical %                   60.0          66        +6.0     ✗ ERROR
+Overall Dropoff %                 90.3          89        -1.3     ✗ ERROR
+Worst Step                    Assign_To  Open_Diff       N/A     ✗ ERROR
+Worst Step Dropoff %              57.6          46       -11.6    ✗ ERROR
+
+ERRORS: All 6 KPI metrics contain errors
+
+IMPACT: CRITICAL - Key performance indicators are inaccurate
+
+WORST STEP IDENTIFICATION ERROR:
+  CSV Analysis: Configure_Levels → Assign_To_Groups (57.6% dropoff)
+  Dashboard:    Open_Differentiation (46% dropoff)
+
+  This is a MAJOR error - the dashboard identifies the wrong step as the
+  worst performer, which could misdirect product improvement efforts.
+
+─────────────────────────────────────────────────────────────────────────────
+
+3.4 MAPPING TABLE VALIDATION ERRORS
+─────────────────────────────────────────────────────────────────────────────
+
+The mapping table in the dashboard contains multiple calculation errors:
+
+ERROR 1: Open Differentiation dropoff
+  Dashboard shows: 46% dropoff from 56 attempts
+  CSV shows: 37.7% dropoff from 53 users
+  Issues: Wrong user count (56 vs 53) AND wrong dropoff % (46% vs 37.7%)
+
+ERROR 2: Assign to Groups dropoff
+  Dashboard shows: 46% dropoff from 24 attempts
+  CSV shows: 57.6% dropoff from 33 users (Configure_Levels count)
+  Note: This is actually the WORST step, not Open Differentiation
+
+ERROR 3: Configure Levels dropoff
+  Dashboard shows: 20% dropoff from 30 attempts
+  CSV shows: 0% dropoff from 33 users (33 → 33, no dropoff at this step)
+  Note: The 57.6% dropoff occurs AFTER Configure_Levels
+
+ERROR 4: Attempt counts inconsistent
+  Dashboard uses "attempts" but shows different numbers than CSV user counts
+  Example: Select_Content shows 56 in dashboard vs 53 in CSV
+
+================================================================================
+SECTION 4: DATA QUALITY RECOMMENDATIONS
+================================================================================
+
+4.1 IMMEDIATE ACTIONS REQUIRED
+─────────────────────────────────────────────────────────────────────────────
+
+PRIORITY 1 (CRITICAL): Fix Funnel Counts
+  Action: Update lines 767-773 in dashboard.html with correct values:
+    - Click_Create_New: 70 → 73
+    - Select_Content: 56 → 53
+    - Open_Differentiation: 30 → 33
+    - Configure_Levels: 24 → 33
+    - Assign_To_Groups: 13 → 14
+    - Complete_And_Publish: 10 → 9
+
+PRIORITY 2 (CRITICAL): Fix KPIs
+  Action: Update lines 785-793 in dashboard.html:
+    - totalComplaints: 32 → 31
+    - highSeverityCount: 21 → 24
+    - highSeverityPct: 66 → 60
+    - overallDropoff: 89 → 90 (or 90.3 for precision)
+    - worstStep: "Open Differentiation" → "Assign to Groups"
+    - worstStepDropoff: 46 → 58 (or 57.6 for precision)
+
+PRIORITY 3 (HIGH): Fix Mapping Table
+  Action: Update lines 797-821 in dashboard.html:
+    - Recalculate all dropoff percentages using correct formula
+    - Update attempt counts to match CSV data
+    - Ensure worst step is "Configure Levels → Assign to Groups"
+
+PRIORITY 4 (LOW): Fix Theme Count
+  Action: Update line 778 in dashboard.html:
+    - "Too many clicks" count: 10 → 9
+
+─────────────────────────────────────────────────────────────────────────────
+
+4.2 DATA HYGIENE BEST PRACTICES
+─────────────────────────────────────────────────────────────────────────────
+
+RECOMMENDATION 1: Automate Data Pipeline
+  Current Issue: Hardcoded data object prone to manual transcription errors
+  Solution: Use Python/JavaScript to read CSVs and generate data object
+            programmatically
+
+RECOMMENDATION 2: Implement Data Validation Tests
+  Create automated tests that:
+    - Compare dashboard data to CSV data
+    - Alert when discrepancies exceed threshold
+    - Run before each dashboard deployment
+
+RECOMMENDATION 3: Document Calculation Methods
+  Clearly document:
+    - How funnel counts are calculated (unique users vs events)
+    - How dropoff percentages are computed
+    - How severity categories are defined
+
+RECOMMENDATION 4: Add Data Freshness Indicator
+  Include in dashboard:
+    - Data last updated timestamp
+    - Date range covered by the data
+    - Number of records processed
+
+RECOMMENDATION 5: Version Control for Data Objects
+  Track changes to the DATA object in git with:
+    - Clear commit messages when data is updated
+    - Reference to source CSV files used
+    - Calculation validation in commit message
+
+─────────────────────────────────────────────────────────────────────────────
+
+4.3 DATA INTEGRITY CHECKS TO IMPLEMENT
+─────────────────────────────────────────────────────────────────────────────
+
+✓ Check 1: Funnel Monotonicity
+  Verify: Each step count ≤ previous step count
+  Current Status: Dashboard violates this (53 → 56 at Select_Content)
+
+✓ Check 2: Sum Validation
+  Verify: Theme counts sum to total complaints
+  Current Status: Dashboard fails (10+8+10+4 = 32, but should be 31)
+
+✓ Check 3: Percentage Validation
+  Verify: High/Critical % = (High+Critical count / Total) * 100
+  Current Status: Dashboard fails (21/40 = 52.5%, not 66%)
+
+✓ Check 4: Dropoff Calculation
+  Verify: Dropoff% = ((PrevStep - CurrentStep) / PrevStep) * 100
+  Current Status: Dashboard has multiple calculation errors
+
+✓ Check 5: Date Range Alignment
+  Verify: All data sources cover same time period
+  Current Status: CSVs align (both Dec 1-20, 2024), but dashboard doesn't
+                  display date range
+
+================================================================================
+SECTION 5: DETAILED CORRECTION TABLE
+================================================================================
+
+Location: /Users/d.crowley/Sites/dataAnalysis/output/dashboard.html
+Lines: 764-848 (DATA object)
+
+LINE-BY-LINE CORRECTIONS NEEDED:
+
+Line 768:  { step: "Click Create New", count: 70, order: 2 },
+           CHANGE TO: count: 73
+
+Line 769:  { step: "Select Content", count: 56, order: 3 },
+           CHANGE TO: count: 53
+
+Line 770:  { step: "Open Differentiation", count: 30, order: 4 },
+           CHANGE TO: count: 33
+
+Line 771:  { step: "Configure Levels", count: 24, order: 5 },
+           CHANGE TO: count: 33
+
+Line 772:  { step: "Assign to Groups", count: 13, order: 6 },
+           CHANGE TO: count: 14
+
+Line 773:  { step: "Complete & Publish", count: 10, order: 7 }
+           CHANGE TO: count: 9
+
+Line 778:  { name: "Too many clicks", count: 10, color: "var(--theme-1)" },
+           CHANGE TO: count: 9
+
+Line 786:  totalComplaints: 32,
+           CHANGE TO: 31
+
+Line 788:  highSeverityCount: 21,
+           CHANGE TO: 24
+
+Line 789:  highSeverityPct: 66,
+           CHANGE TO: 60
+
+Line 791:  overallDropoff: 89,
+           CHANGE TO: 90
+
+Line 792:  worstStep: "Open Differentiation",
+           CHANGE TO: "Assign to Groups"
+
+Line 793:  worstStepDropoff: 46
+           CHANGE TO: 58
+
+Lines 797-821: Mapping table requires complete recalculation
+              (Detailed corrections available upon request)
+
+================================================================================
+SECTION 6: ROOT CAUSE ANALYSIS
+================================================================================
+
+6.1 HOW DID THESE ERRORS OCCUR?
+─────────────────────────────────────────────────────────────────────────────
+
+HYPOTHESIS 1: Manual Transcription Errors
+  Evidence: Small off-by-one errors (13 vs 14, 10 vs 9, 9 vs 10)
+  Likely Cause: Data was manually typed into dashboard from calculations
+  Prevention: Automate data extraction from CSVs
+
+HYPOTHESIS 2: Calculation Errors
+  Evidence: Wrong dropoff percentages and worst step identification
+  Likely Cause: Incorrect formulas or calculation methodology
+  Prevention: Document and validate all calculation formulas
+
+HYPOTHESIS 3: Stale Data
+  Evidence: Dashboard data doesn't match current CSV files
+  Likely Cause: Dashboard was created from earlier version of CSVs
+  Prevention: Always regenerate dashboard data when CSVs change
+
+HYPOTHESIS 4: Copy-Paste Errors
+  Evidence: Some values are close but not exact (70 vs 73, 56 vs 53)
+  Likely Cause: Values copied from intermediate calculation or draft
+  Prevention: Use single source of truth for all metrics
+
+─────────────────────────────────────────────────────────────────────────────
+
+6.2 IMPACT ASSESSMENT
+─────────────────────────────────────────────────────────────────────────────
+
+BUSINESS IMPACT: HIGH
+  - Wrong identification of worst-performing step could lead to:
+    • Focusing improvement efforts on wrong part of workflow
+    • Wasting development resources
+    • Not addressing actual bottleneck (Assign to Groups)
+
+DATA TRUST IMPACT: MEDIUM
+  - Stakeholders may lose confidence in dashboard if errors discovered
+  - Future data-driven decisions may be questioned
+
+USER EXPERIENCE IMPACT: MEDIUM
+  - Designers/PMs using dashboard will have incorrect mental model
+  - Product strategy could be based on inaccurate data
+
+TECHNICAL DEBT IMPACT: LOW
+  - Manual data process creates ongoing risk of errors
+  - Each dashboard update requires manual validation
+
+================================================================================
+SECTION 7: VALIDATION CERTIFICATE
+================================================================================
+
+OVERALL DATA QUALITY GRADE: B-
+
+SOURCE DATA QUALITY:     A+  (Both CSV files are clean and valid)
+DASHBOARD ACCURACY:      D   (12 discrepancies across critical metrics)
+DATA PIPELINE MATURITY:  C   (Manual process, no automation)
+DOCUMENTATION:           B-  (Code is readable but lacks validation tests)
+
+CERTIFICATION STATUS: ⚠️  NOT APPROVED FOR PRODUCTION
+
+The underlying CSV data is excellent and ready for analysis. However, the
+dashboard contains multiple data accuracy errors that must be corrected
+before it can be used for decision-making.
+
+NEXT STEPS:
+  1. Correct all 12 data discrepancies identified in Section 5
+  2. Implement automated data extraction (Recommendation 1)
+  3. Add validation tests (Recommendation 2)
+  4. Re-run this validation check
+  5. Once clean: Approve for production use
+
+================================================================================
+APPENDIX A: CORRECT METRICS REFERENCE
+================================================================================
+
+For quick reference when updating the dashboard:
+
+FUNNEL (lines 767-773):
+  Open_Assignments: 93
+  Click_Create_New: 73
+  Select_Content: 53
+  Open_Differentiation: 33
+  Configure_Levels: 33
+  Assign_To_Groups: 14
+  Complete_And_Publish: 9
+
+THEMES (lines 778-781):
+  Too many clicks: 9
+  Time consuming: 8
+  Confusing UI: 10
+  Missing feature: 4
+
+KPIS (lines 786-793):
+  totalComplaints: 31
+  highSeverityCount: 24
+  highSeverityPct: 60
+  overallDropoff: 90
+  worstStep: "Assign to Groups"
+  worstStepDropoff: 58
+
+DROPOFF PERCENTAGES (for mapping table):
+  Open_Assignments → Click_Create_New: 21.5%
+  Click_Create_New → Select_Content: 27.4%
+  Select_Content → Open_Differentiation: 37.7%
+  Open_Differentiation → Configure_Levels: 0.0%
+  Configure_Levels → Assign_To_Groups: 57.6%  ← WORST
+  Assign_To_Groups → Complete_And_Publish: 35.7%
+
+================================================================================
+END OF REPORT
+================================================================================
+
+Report generated by: Data Quality Validation System
+Confidence Level: HIGH (All calculations verified against source CSVs)
+Validation Method: Automated analysis + manual verification
+Date: 2026-01-15

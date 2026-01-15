@@ -256,14 +256,6 @@ Consistent meaning across dashboards:
 --semantic-target: #8B5CF6;
 ```
 
-### Semantic thresholds (default)
-When applying semantic colors to conversion / drop-off:
-- **Good** (use `--semantic-success`): drop-off < **30%**
-- **Warning** (use `--semantic-warning`): drop-off **30–50%**
-- **Concerning** (use `--semantic-error`): drop-off ≥ **50%**
-
-Always show a small legend if color encodes meaning.
-
 ---
 
 ## Accessibility Notes

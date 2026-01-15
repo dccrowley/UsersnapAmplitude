@@ -12,8 +12,6 @@ Best for part-to-whole relationships with 5 or fewer segments.
 - Sort slices descending, starting at 12 o'clock
 - Direct label on slices, avoid legends when possible
 - Add subtle segment gaps (1-2px) for visual separation
-- Use **hover tooltip** for segment name + value + share (%), especially when direct labels are not feasible
-- Use subtle hover emphasis (opacity or scale) to clarify the hovered segment (respect `prefers-reduced-motion`)
 
 ### React Implementation (Recharts)
 
@@ -103,8 +101,6 @@ Best for comparing discrete categories.
 - Sort bars by value (ascending or descending) unless natural order exists
 - Direct label values at end of bars when space permits
 - Consistent bar width, use spacing to separate groups
-- If bars encode status, use semantic colors consistently (success/warning/error) and include a compact legend
-- Add hover tooltip (value + context) and subtle emphasis transition (radius/opacity)
 
 ### React Implementation (Recharts)
 
