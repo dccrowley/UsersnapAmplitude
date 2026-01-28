@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Platform Engagement Crisis - Corrected Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+  :root {
+    --alef-mint: #D4F1E8;       /* Light mint - backgrounds */
+    --alef-teal: #5FCFB5;       /* Saturated teal - accents */
+    --alef-navy: #003C71;       /* Navy - text on light backgrounds */
+
+    /* Semantic colors - Muted palette complementing Alef brand */
+    --critical: #FD7F6F;  /* Coral - soft alert */
+    --critical-bg: rgba(253, 127, 111, 0.12);
+    --warning: #FFB55A;   /* Amber - warm caution */
+    --warning-bg: rgba(255, 181, 90, 0.12);
+    --normal: #7EB0D5;    /* Soft blue - harmonises with Alef */
+    --normal-bg: rgba(126, 176, 213, 0.12);
+    --success: #8BD3C7;   /* Mint - muted positive */
+    --success-bg: rgba(139, 211, 199, 0.12);
+
+    /* Complaint theme colors - Muted complementary to Alef brand */
+    --theme-1: #FD7F6F;  /* Coral */
+    --theme-2: #FFB55A;  /* Amber */
+    --theme-3: #BD7EBE;  /* Lavender */
+    --theme-4: #BEB9DB;  /* Soft lilac */
+
+    --neutral-50: #FAFAFA;
+    --neutral-100: #F5F5F5;
+    --neutral-200: #EEEEEE;
+    --neutral-300: #E0E0E0;
+    --neutral-400: #BDBDBD;
+    --neutral-500: #9E9E9E;
+    --neutral-600: #757575;
+    --neutral-700: #616161;
+    --neutral-800: #424242;
+    --neutral-900: #212121;
+
+    --surface: #ffffff;
+    --surface-elevated: #ffffff;
+
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Fira Sans", system-ui, -apple-system, sans-serif;
+    background: var(--neutral-100);
+    color: var(--neutral-900);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--space-lg);
+  }
+
+  /* Header */
+  .header {
+    background: var(--alef-teal);
+    color: var(--alef-navy);
+    padding: var(--space-lg) var(--space-xl);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  .header-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-xs);
+  }
+
+  .header-subtitle {
+    font-size: 14px;
+    opacity: 0.85;
+  }
+
+  /* KPI Row */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+
+  .kpi-card {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .kpi-label {
+    font-size: 13px;
+    color: var(--neutral-600);
+    font-weight: 500;
+    margin-bottom: var(--space-sm);
+  }
+
+  .kpi-value {
+    font-family: "Fira Mono", monospace;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: var(--space-sm);
+    letter-spacing: -0.02em;
+  }
+
+  .kpi-trend {
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .kpi-trend.critical { color: var(--critical); }
+  .kpi-trend.warning { color: var(--warning); }
+  .kpi-trend.neutral { color: var(--neutral-600); }
+
+  .kpi-context {
+    font-size: 12px;
+    color: var(--neutral-500);
+    margin-top: var(--space-xs);
+  }
+
+  /* Main Grid */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+  }
+
+  .main-grid.full {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--neutral-900);
+    margin-bottom: var(--space-xs);
+  }
+
+  .card-subtitle {
+    font-size: 13px;
+    color: var(--neutral-600);
+    margin-bottom: var(--space-lg);
+  }
+
+  .chart-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    margin-bottom: var(--space-lg);
+  }
+
+  .chart-container.tall {
+    height: 400px;
+  }
+
+  /* Insight Block */
+  .insight-block {
+    background: var(--critical-bg);
+    color: var(--alef-navy);
+    border-radius: var(--radius-md);
+    padding: var(--space-xl);
+    margin-top: var(--space-lg);
+    border-left: 4px solid var(--critical);
+  }
+
+  .insight-headline {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: var(--space-lg);
+    color: var(--critical);
+  }
+
+  .insight-headline .highlight {
+    color: var(--critical);
+    font-weight: 800;
+  }
+
+  .insight-body {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: var(--space-lg);
+    color: var(--alef-navy);
+  }
+
+  .finding-list {
+    list-style: none;
+    margin: var(--space-lg) 0;
+  }
+
+  .finding-list li {
+    padding: var(--space-md);
+    margin-bottom: var(--space-sm);
+    background: rgba(255,255,255,0.6);
+    border-left: 3px solid var(--critical);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    line-height: 1.5;
+    font-size: 14px;
+  }
+
+  .finding-list li strong {
+    display: block;
+    color: var(--critical);
+    margin-bottom: var(--space-xs);
+  }
+
+  /* Data Limitation Block */
+  .limitation-block {
+    background: var(--warning-bg);
+    border-left: 4px solid var(--warning);
+    color: var(--alef-navy);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    margin: var(--space-lg) 0;
+  }
+
+  .limitation-title {
+    font-weight: 600;
+    color: var(--warning);
+    margin-bottom: var(--space-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .limitation-content {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .limitation-content ul {
+    margin: var(--space-md) 0 var(--space-md) var(--space-lg);
+  }
+
+  .limitation-content li {
+    margin-bottom: var(--space-sm);
+  }
+
+  /* Comparison Table */
+  .comparison-table {
+    width: 100%;
+    margin: var(--space-lg) 0;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .comparison-table th {
+    text-align: left;
+    font-weight: 600;
+    color: white;
+    padding: var(--space-md);
+    background: var(--alef-navy);
+    border-bottom: 2px solid var(--neutral-300);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .comparison-table td {
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--neutral-200);
+  }
+
+  .comparison-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .comparison-table .grade {
+    font-weight: 600;
+    color: var(--neutral-900);
+  }
+
+  .comparison-table .metric {
+    font-family: "Fira Mono", monospace;
+    font-weight: 600;
+    color: var(--alef-navy);
+  }
+
+  .comparison-table .critical-metric {
+    color: var(--critical);
+  }
+
+  /* Recommendation Block */
+  .recommendation-block {
+    background: var(--success-bg);
+    border-left: 4px solid var(--success);
+    color: var(--alef-navy);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    margin: var(--space-lg) 0;
+  }
+
+  .recommendation-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--success);
+    margin-bottom: var(--space-md);
+  }
+
+  .recommendation-content {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .recommendation-content ol {
+    margin: var(--space-md) 0 var(--space-md) var(--space-lg);
+  }
+
+  .recommendation-content li {
+    margin-bottom: var(--space-md);
+  }
+
+  /* Method Notes */
+  .method-notes {
+    margin-top: var(--space-lg);
+    padding: var(--space-lg);
+    background: var(--neutral-50);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--neutral-200);
+  }
+
+  .method-notes h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--neutral-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-sm);
+  }
+
+  .method-notes p {
+    font-size: 13px;
+    color: var(--neutral-600);
+    line-height: 1.6;
+    margin-bottom: var(--space-sm);
+  }
+
+  @media (max-width: 1024px) {
+    .main-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .kpi-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-title">Platform Engagement Crisis: Corrected Analysis</div>
+      <div class="header-subtitle">Evidence-based findings from Amplitude cohort data (67,816 students)</div>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Students Analyzed</div>
+        <div class="kpi-value">67.8K</div>
+        <div class="kpi-context">Grades 5-12 cohort</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Never Completed A Game</div>
+        <div class="kpi-value" style="color: var(--critical);">93.2%</div>
+        <div class="kpi-trend critical">↑ Critical engagement crisis</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Grades 6-8 (1 Game Only)</div>
+        <div class="kpi-value" style="color: var(--warning);">7.0%</div>
+        <div class="kpi-context">vs 3.2% for Grade 9+</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Data Quality</div>
+        <div class="kpi-value" style="color: var(--warning);">⚠</div>
+        <div class="kpi-context">Snapshot only, no timestamps</div>
+      </div>
+    </div>
+
+    <!-- Main Charts -->
+    <div class="main-grid full">
+      <!-- Chart 1: 1-Game Completers (Actual Signal) -->
+      <div class="card">
+        <div class="card-title">Students with Exactly 1 Game (Grade Comparison)</div>
+        <div class="card-subtitle">The actual data signal - grades 6-8 spike, grade 9+ drop (breaks fragmentation hypothesis)</div>
+        <div class="chart-container">
+          <canvas id="completionChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Curriculum Complexity Comparison -->
+    <div class="main-grid full">
+      <div class="card">
+        <div class="card-title">Curriculum Structure Impact</div>
+        <div class="card-subtitle">1-game completion by curriculum type - testing fragmentation hypothesis</div>
+        <div class="chart-container tall">
+          <canvas id="curriculumChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Findings -->
+    <div class="insight-block">
+      <div class="insight-headline">Critical Findings: Original Analysis Was Flawed</div>
+
+      <ul class="finding-list">
+        <li>
+          <strong>Hypothesis Failed: Fragmentation is NOT the Root Cause</strong>
+          Grade 9 has 50+ curriculum sections (2× more fragmented than grades 6-8), yet shows LOWER 1-game completion (3.2% vs 7.0%). If fragmentation caused the problem, Grade 9 should be worse. It's better.
+        </li>
+
+        <li>
+          <strong>What's Definitely True: Grades 6-8 Show Elevated 1-Game Completion</strong>
+          609-664 students per grade complete exactly 1 game and never return. This pattern is real and consistent (6.97%-7.54%).
+        </li>
+
+        <li>
+          <strong>Real Problem: 93.2% Platform Disengagement</strong>
+          The vast majority of students never complete even 1 game. This is the actual crisis. Root cause: unknown from current data.
+        </li>
+
+        <li>
+          <strong>Curriculum Type Matters More Than Fragmentation</strong>
+          General curriculum tracks (8.84% 1-game completion) significantly underperform Advanced tracks (3.92%). This suggests curriculum difficulty/relevance, not UI fragmentation.
+        </li>
+
+        <li>
+          <strong>Data Limitation: This is a Snapshot, Not Churn Data</strong>
+          No timestamps, login recency, or session duration. Can't distinguish between: still-active users, newly-assigned students, and actually-churned students.
+        </li>
+      </ul>
+
+      <div class="limitation-block">
+        <div class="limitation-title">⚠ Critical Data Limitation</div>
+        <div class="limitation-content">
+          <p>This Amplitude export is a <strong>point-in-time snapshot</strong>, not a churn analysis:</p>
+          <ul>
+            <li><strong>No timestamps:</strong> Can't determine WHEN games were completed</li>
+            <li><strong>No login recency:</strong> Can't determine if students are still active or abandoned</li>
+            <li><strong>No session depth:</strong> Can't measure engagement quality, lesson attempts, or time spent</li>
+            <li><strong>No attrition trend:</strong> Can't identify declining engagement over time</li>
+          </ul>
+          <p style="margin-top: var(--space-md); font-weight: 600;">Result: Can't definitively prove students "churned" - they may still be active.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grade Comparison Table -->
+    <div class="card">
+      <div class="card-title">Grade-by-Grade Breakdown</div>
+      <div class="card-subtitle">Evidence for the fragmentation hypothesis failure</div>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Grade</th>
+            <th>Total Students</th>
+            <th>Curriculum Sections</th>
+            <th>Completed ≥1 Game</th>
+            <th>Exactly 1 Game Only</th>
+            <th>1-Game Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="grade">5</td>
+            <td class="metric">8,757</td>
+            <td>Simple (9)</td>
+            <td class="metric">8,763 (100%)</td>
+            <td class="metric">11</td>
+            <td class="metric critical-metric">0.1%</td>
+          </tr>
+          <tr>
+            <td class="grade">6</td>
+            <td class="metric">8,739</td>
+            <td>Complex (23)</td>
+            <td class="metric">9,348 (107%)*</td>
+            <td class="metric">609</td>
+            <td class="metric critical-metric">7.0%</td>
+          </tr>
+          <tr>
+            <td class="grade">7</td>
+            <td class="metric">8,899</td>
+            <td>Complex (22)</td>
+            <td class="metric">9,215 (103%)*</td>
+            <td class="metric">616</td>
+            <td class="metric critical-metric">6.9%</td>
+          </tr>
+          <tr>
+            <td class="grade">8</td>
+            <td class="metric">8,809</td>
+            <td>Complex (25)</td>
+            <td class="metric">9,015 (102%)*</td>
+            <td class="metric">664</td>
+            <td class="metric critical-metric">7.5%</td>
+          </tr>
+          <tr>
+            <td class="grade">9</td>
+            <td class="metric">7,123</td>
+            <td>Very Complex (50+)</td>
+            <td class="metric">7,337 (103%)*</td>
+            <td class="metric">233</td>
+            <td class="metric">3.2%</td>
+          </tr>
+          <tr>
+            <td class="grade">10+</td>
+            <td class="metric">25,489</td>
+            <td>Complex (45+)</td>
+            <td class="metric">26,142 (103%)*</td>
+            <td class="metric">656</td>
+            <td class="metric">2.6%</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="font-size: 12px; color: var(--neutral-500); margin-top: var(--space-md);">
+        * Percentages > 100% indicate data duplication (students appearing in multiple grades or counting anomalies)
+      </div>
+    </div>
+
+    <!-- Recommendation -->
+    <div class="recommendation-block">
+      <div class="recommendation-title">Recommended Next Steps (Before Building Fixes)</div>
+      <div class="recommendation-content">
+        <p>Do NOT build the fragmentation UI fix yet. This would be treating the symptom, not the disease.</p>
+        <ol>
+          <li><strong>Week 1-2: Request Better Data</strong> - Ask Amplitude for export with timestamps, session duration, and login recency. Determine actual churn vs. snapshot confusion.</li>
+
+          <li><strong>Week 3-4: Investigate Root Cause</strong> - Interview grades 6-8 students. Is it curriculum difficulty? Developmental stage? New cohort composition? Test why Advanced tracks outperform General tracks.</li>
+
+          <li><strong>Week 5-6: Test Hypothesis</strong> - If fragmentation testing makes sense, A/B test on small cohort first. Measure engagement lift before rollout.</li>
+
+          <li><strong>Week 7+: Evidence-Based Decision</strong> - Only proceed if testing validates >10% improvement. Otherwise, pursue real root cause.</li>
+        </ol>
+        <p style="margin-top: var(--space-lg); font-weight: 600;">Expected outcome: Either confirms fragmentation is the issue (proceed with confidence) or discovers the real problem and fixes it more effectively.</p>
+      </div>
+    </div>
+
+    <!-- Method Notes -->
+    <div class="method-notes">
+      <h3>Methodology & Data Quality Notes</h3>
+      <p><strong>Data Source:</strong> Amplitude cohort export (Cohort_e-eurox2mf_query_rPKMxihr0V_0OFczd2Hvhmi6vRw42TLzR6j_1769607887594.csv)</p>
+      <p><strong>Sample Size:</strong> 67,816 students, grades 5-12</p>
+      <p><strong>Key Limitation:</strong> This is a snapshot cohort, not a longitudinal dataset. It shows the current state of each student's game completion metric (gp:student_game_completed), but without timestamps, we cannot determine:</p>
+      <ul style="margin: var(--space-sm) 0 var(--space-md) var(--space-lg);">
+        <li>When each student completed their games</li>
+        <li>Whether they are still active or have abandoned the platform</li>
+        <li>How long they engaged before stopping</li>
+        <li>Whether engagement is declining over time</li>
+      </ul>
+      <p><strong>Analysis Correction:</strong> The original analysis assumed "1-game completion = churn" based on curriculum complexity correlation. However, the Grade 9 paradox (2× more complex curriculum, lower 1-game rate) breaks this logic. Root cause remains unknown without additional data.</p>
+      <p><strong>Confidence Levels:</strong></p>
+      <ul style="margin: var(--space-sm) 0 var(--space-md) var(--space-lg);">
+        <li><strong>HIGH:</strong> Grades 6-8 have elevated 1-game completion rates (verified pattern)</li>
+        <li><strong>MEDIUM:</strong> Curriculum type affects engagement (General > Advanced)</li>
+        <li><strong>LOW:</strong> Fragmentation is the root cause (contradicted by Grade 9 data)</li>
+        <li><strong>UNKNOWN:</strong> Whether these students actually churned or remain active</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Chart.js configurations
+    const chartDefaults = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: {
+            font: { family: '"Fira Sans", system-ui, sans-serif', size: 12 },
+            color: '#616161'
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { font: { family: '"Fira Sans", system-ui, sans-serif', size: 12 }, color: '#616161' },
+          grid: { color: '#EEEEEE' }
+        },
+        y: {
+          ticks: { font: { family: '"Fira Sans", system-ui, sans-serif', size: 12 }, color: '#616161' },
+          grid: { color: '#EEEEEE' }
+        }
+      }
+    };
+
+    // Chart 1: 1-Game Completion Rate by Grade (ACTUAL SIGNAL)
+    const completionCtx = document.getElementById('completionChart').getContext('2d');
+    new Chart(completionCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10+'],
+        datasets: [{
+          label: '% Exactly 1 Game (Potential Early Churn)',
+          data: [0.1, 7.0, 6.9, 7.5, 3.2, 2.6],
+          backgroundColor: ['#8BD3C7', '#FD7F6F', '#FD7F6F', '#FD7F6F', '#FFB55A', '#FFB55A'],
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        ...chartDefaults,
+        plugins: {
+          ...chartDefaults.plugins,
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.parsed.y.toFixed(1) + '% of students';
+              }
+            }
+          }
+        },
+        scales: {
+          ...chartDefaults.scales,
+          y: {
+            ...chartDefaults.scales.y,
+            min: 0,
+            max: 8,
+            ticks: { callback: (v) => v + '%' }
+          }
+        }
+      }
+    });
+
+    // Chart 2: Curriculum Complexity Analysis
+    const curriculumCtx = document.getElementById('curriculumChart').getContext('2d');
+    new Chart(curriculumCtx, {
+      type: 'scatter',
+      data: {
+        datasets: [
+          {
+            label: 'Grade 5 (Simple)',
+            data: [{ x: 9, y: 0.1 }],
+            backgroundColor: '#8BD3C7',
+            borderColor: '#8BD3C7',
+            borderWidth: 2,
+            pointRadius: 8
+          },
+          {
+            label: 'Grades 6-8 (Complex)',
+            data: [
+              { x: 23, y: 7.0, label: 'Grade 6' },
+              { x: 22, y: 6.9, label: 'Grade 7' },
+              { x: 25, y: 7.5, label: 'Grade 8' }
+            ],
+            backgroundColor: '#FD7F6F',
+            borderColor: '#FD7F6F',
+            borderWidth: 2,
+            pointRadius: 8
+          },
+          {
+            label: 'Grade 9+ (Very Complex)',
+            data: [
+              { x: 50, y: 3.2, label: 'Grade 9' },
+              { x: 48, y: 2.6, label: 'Grade 10+' }
+            ],
+            backgroundColor: '#FFB55A',
+            borderColor: '#FFB55A',
+            borderWidth: 2,
+            pointRadius: 8
+          }
+        ]
+      },
+      options: {
+        ...chartDefaults,
+        plugins: {
+          ...chartDefaults.plugins,
+          legend: {
+            ...chartDefaults.plugins.legend,
+            position: 'bottom'
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.raw.label || '';
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ...chartDefaults.scales.x,
+            type: 'linear',
+            position: 'bottom',
+            title: {
+              display: true,
+              text: 'Number of Curriculum Sections',
+              font: { weight: 'bold' }
+            },
+            min: 0,
+            max: 60
+          },
+          y: {
+            ...chartDefaults.scales.y,
+            title: {
+              display: true,
+              text: '1-Game Completion Rate (%)',
+              font: { weight: 'bold' }
+            },
+            min: 0,
+            max: 8
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
